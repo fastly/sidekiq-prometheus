@@ -1,0 +1,133 @@
+AllCops:
+  TargetRubyVersion: 2.5
+  DisplayCopNames: true
+  Include:
+    - '**/*.gemspec'
+    - '**/*.rake'
+    - '**/Gemfile'
+    - '**/Rakefile'
+    - '**/*.rb'
+  Exclude:
+    - db/schema.rb
+    - bin/setup
+    - bin/update
+    - vendor/**/*
+
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+HashSyntax:
+  Enabled: false
+
+BlockNesting:
+  Enabled: true
+
+AssignmentInCondition:
+  Enabled: false
+
+CollectionMethods:
+  Enabled: false
+
+Lint/MissingCopEnableDirective:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 75
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/ClassLength:
+  Max: 300
+
+Metrics/ModuleLength:
+  Max: 300
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/BlockLength:
+  Enabled: true
+  ExcludedMethods:
+    - class_methods
+    - included
+
+  Exclude:
+    - Gemfile
+    - spec/**/*
+    - '*.gemspec'
+
+Naming/PredicateName:
+  Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - Capfile
+    - Appraisals
+
+Performance/TimesMap:
+  Enabled: false
+
+HandleExceptions:
+  Enabled: false
+
+Documentation:
+  Enabled: false
+
+RegexpLiteral:
+  Enabled: false
+
+SignalException:
+  EnforcedStyle: only_raise
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
+
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Style/TrivialAccessors:
+  Enabled: true
+  ExactNameMatch: true
+
+Style/LineEndConcatenation:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
