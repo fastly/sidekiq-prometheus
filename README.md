@@ -31,7 +31,7 @@ To run with the defaults add this to your Sidekiq initializer
 SidekiqPrometheus.setup
 ```
 
-This will register metrics, start the global reporter (if available), and start the Rack server for scraping. The default port is 9357 but this is easily configurable.
+This will register metrics, start the global reporter (if available), and start the Rack server for scraping. The default port is 9359 but this is easily configurable.
 
 If you are running multiple services that will be reporting Sidekiq metrics you will want to take advantage of the `base_labels` configuration option. For example:
 
@@ -69,7 +69,7 @@ curl http://localhost:8675/metrics
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
 * `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defatuls to `true`.
 * `periodic_reporting_interval`: interval in seconds for reporting periodic metrics. Default: `30`
-* `metrics_port`: Port on which the rack server will listen. Defaults to `9357`
+* `metrics_port`: Port on which the rack server will listen. Defaults to `9359`
 
 ```
 SidekiqPrometheus.configure do |config|
