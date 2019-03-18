@@ -163,12 +163,6 @@ module SidekiqPrometheus
       )
     end
   end
-
-  private
-
-  def metrics
-    SidekiqPrometheus::Metrics
-  end
 end
 
 require 'sidekiq_prometheus/job_metrics'
