@@ -63,6 +63,52 @@ RSpec.describe SidekiqPrometheus do
     end
   end
 
+  describe '.register_custom_metrics' do
+    let(:logger) { double 'logger', warn: nil }
+
+    before do
+      Sidekiq.logger = logger
+    end
+
+    after do
+      described_class.custom_metrics = []
+      Sidekiq.logger = Logger.new('/dev/null')
+    end
+
+    it 'does nothing if no custom metrics are defined' do
+      allow(SidekiqPrometheus::Metrics).to receive(:register_metrics)
+
+      expect(described_class.custom_metrics).to eq []
+      expect(described_class.register_custom_metrics).to be nil
+      expect(SidekiqPrometheus::Metrics).not_to have_received(:register_metrics)
+    end
+
+    it 'skips registering and logs a warning if hash keys are missing' do
+      allow(SidekiqPrometheus::Metrics).to receive(:register_metrics)
+
+      described_class.custom_metrics = [{ name: :foo, type: :gauge }]
+      described_class.register_custom_metrics
+
+      expect(logger).to have_received(:warn).with('[SidekiqPrometheus] Skipping custom metrics. Hash does not define required keys')
+    end
+
+    it 'registers the custom metrics' do
+      custom = [
+        {
+          name: :rpm,
+          type: :gauge,
+          docstring: 'revolutions per minute',
+        },
+      ]
+
+      described_class.custom_metrics = custom
+      described_class.register_custom_metrics
+
+      expect(logger).not_to have_received(:warn)
+      expect(described_class.get(:rpm)).to be_kind_of(Prometheus::Client::Gauge)
+    end
+  end
+
   describe '.setup' do
     it 'registers metrics and instruments sidekiq for prometheus' do
       allow(Object).to receive(:const_defined?).with('Sidekiq::Enterprise').and_return(true)
@@ -76,6 +122,17 @@ RSpec.describe SidekiqPrometheus do
       events = Sidekiq.options[:lifecycle_events]
       expect(events[:startup].first).to be_kind_of(Proc)
       expect(events[:shutdown].first).to be_kind_of(Proc)
+    end
+
+    it 'registers custom metrics' do
+      custom = [{ name: :rpm, type: :gauge, docstring: 'rpm' }]
+
+      described_class.custom_metrics = custom
+      described_class.setup
+
+      expect(described_class.get(:rpm)).to be_kind_of(Prometheus::Client::Gauge)
+
+      described_class.custom_metrics = []
     end
 
     it 'can only be called once' do
