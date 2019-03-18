@@ -24,3 +24,5 @@ def silence
   $stderr = original_stderr
   $stdout = original_stdout
 end
+
+Sidekiq.logger = Logger.new('/dev/null')

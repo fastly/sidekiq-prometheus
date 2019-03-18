@@ -20,6 +20,21 @@ module SidekiqPrometheus
     # @return [Hash] Custom labels applied to specific metrics
     attr_accessor :custom_labels
 
+    # @return [Array] Custom metrics that will be registered on setup.
+    # @example
+    #   [
+    #     {
+    #       name: :metric_name,
+    #       type: :prometheus_metric_type,
+    #       docstring: 'Description of the metric',
+    #       base_labels : { label: 'value' },
+    #     }
+    #   ]
+    # @note Each element of the array is a hash and must have the required keys: `:name`, `:type`, and `:docstring`.
+    #   The values for `:name` and `:type` should be symbols and `:docstring` should be a string.
+    #   `base_labels` is optional and, if used, must be a hash of labels that will be included on every instance of this metric.
+    attr_accessor :custom_metrics
+
     # @return [Boolean] Setting to control enabling/disabling GC metrics. Default: true
     attr_accessor :gc_metrics_enabled
 
@@ -53,6 +68,7 @@ module SidekiqPrometheus
   self.periodic_reporting_interval = 30
   self.metrics_port = 9359
   self.custom_labels = {}
+  self.custom_metrics = []
 
   module_function
 
@@ -119,6 +135,17 @@ module SidekiqPrometheus
   end
 
   ##
+  # Register custom metrics
+  # Internal method called by +setup+. This method should not be called from application code in most cases.
+  def register_custom_metrics
+    return if custom_metrics.empty?
+
+    raise SidekiqPrometheus::Error, 'custom_metrics is not an array.' unless custom_metrics.is_a?(Array)
+
+    SidekiqPrometheus::Metrics.register_metrics(custom_metrics)
+  end
+
+  ##
   # register metrics and instrument sidekiq
   def setup
     return false if @setup_complete
@@ -126,7 +153,10 @@ module SidekiqPrometheus
     SidekiqPrometheus::Metrics.register_sidekiq_gc_metric if gc_metrics_enabled?
     SidekiqPrometheus::Metrics.register_sidekiq_worker_gc_metrics if gc_metrics_enabled? && periodic_metrics_enabled?
     SidekiqPrometheus::Metrics.register_sidekiq_global_metrics if global_metrics_enabled? && periodic_metrics_enabled?
+    register_custom_metrics
+
     sidekiq_setup
+
     self.setup_complete = true
   end
 
@@ -164,6 +194,8 @@ module SidekiqPrometheus
     end
   end
 end
+
+class SidekiqPrometheus::Error < StandardError; end
 
 require 'sidekiq_prometheus/job_metrics'
 require 'sidekiq_prometheus/metrics'
