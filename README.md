@@ -1,11 +1,10 @@
-# SidekiqPrometheus
+# Sidekiq Prometheus
 
-Prometheus Instrumentation for Sidekiq.
+Prometheus Instrumentation for Sidekiq. This gem provides:
 
 * Sidekiq server middleware for reporting job metrics
-* Global metrics reporter using the Sidekiq API for reporting Sidekiq cluster stats (requires Sidekiq::Enterprise)
-* Sidecar Rack server to provide scrape-able endpoint for Prometheus
-
+* Global metrics reporter that uses the Sidekiq API for reporting Sidekiq cluster stats (*requires Sidekiq::Enterprise*)
+* Sidecar Rack server to provide scrape-able endpoint for Prometheus. This allows for metrics to be reported without having to run a separate prometheus exporter process.
 
 ## Installation
 
@@ -33,6 +32,33 @@ SidekiqPrometheus.setup
 
 This will register metrics, start the global reporter (if available), and start the Rack server for scraping. The default port is 9359 but this is easily configurable.
 
+Once Sidekiq server is running you can see your metrics or scrape them with Prometheus:
+
+```
+$curl http://localhost:9359/metrics
+
+# TYPE sidekiq_job_count counter
+# HELP sidekiq_job_count Count of Sidekiq jobs
+# TYPE sidekiq_job_duration histogram
+# HELP sidekiq_job_duration Sidekiq job processing duration
+
+[etc]
+```
+
+[Full documentation](https://www.rubydoc.info/gems/sidekiq_prometheus)
+
+## Configuration
+
+You can configure the gem by calling `configure`:
+
+```
+SidekiqPrometheus.configure do |config|
+  config.base_labels = { service: 'kubernandos_api' }
+end
+```
+
+`configure` will automatically call setup so
+
 If you are running multiple services that will be reporting Sidekiq metrics you will want to take advantage of the `base_labels` configuration option. For example:
 
 ```
@@ -40,26 +66,6 @@ SidekiqPrometheus.configure do |config|
   config.base_labels  = { service: 'image_api' }
   config.metrics_port = 9090
 end
-
-# always call setup after configure.
-SidekiqPrometheus.setup
-```
-
-The call to `setup` is necessary as that it what registers the metrics and instruments Sidekiq.
-There is also a helper method: `SidekiqPrometheus.configure!` which can be used to configure and setup in one step:
-
-```
-SidekiqPrometheus.configure! do |config|
-  config.base_labels  = { service: 'dogs_api' }
-end
-
-# No need to call SidekiqPrometheus.setup because the bang method did it for us/
-```
-
-Once sidekiq server is running you can see your metrics or scrape them with Prometheus:
-
-```
-curl http://localhost:8675/metrics
 ```
 
 #### Configuration options
@@ -67,9 +73,10 @@ curl http://localhost:8675/metrics
 * `base_labels`: Hash of labels that will be included with every metric when they are registered.
 * `gc_metrics_enabled`: Boolean that determines whether to record object allocation metrics per job. The default is `true`. Setting this to `false` if you don't need this metric.
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
-* `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defatuls to `true`.
+* `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defaults to `true`.
 * `periodic_reporting_interval`: interval in seconds for reporting periodic metrics. Default: `30`
 * `metrics_port`: Port on which the rack server will listen. Defaults to `9359`
+* `registry`: An instance of `Prometheus::Client::Registry`. If you have a registry with defined metrics you can use this option to pass in your registry.
 
 ```
 SidekiqPrometheus.configure do |config|
@@ -133,7 +140,7 @@ These require `SidekiqPrometheus.gc_metrics_enabled? == true` and `SidekiqPromet
 
 These require `SidekiqPrometheus.global_metrics_enabled? == true` and `SidekiqPrometheus.periodic_metrics_enabled? == true`
 
-Periodic metric reporting relies onSidekiq Enterprise's leader election functionality ([Ent Leader Election ](https://github.com/mperham/sidekiq/wiki/Ent-Leader-Election))
+Periodic metric reporting relies on Sidekiq Enterprise's leader election functionality ([Ent Leader Election ](https://github.com/mperham/sidekiq/wiki/Ent-Leader-Election))
 which ensures that metrics are only reported once per cluster.
 
 | Metric | Type | Description |

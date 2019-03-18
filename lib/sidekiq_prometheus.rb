@@ -42,6 +42,9 @@ module SidekiqPrometheus
     # Orverride the default Prometheus Metric Registry
     # @return [Prometheus::Client::Registry]
     attr_writer :registry
+
+    # @private
+    attr_writer :setup_complete
   end
 
   self.gc_metrics_enabled = true
@@ -60,7 +63,7 @@ module SidekiqPrometheus
   end
 
   ##
-  # Configure SidekiqPrometheus
+  # Configure SidekiqPrometheus and setup for reporting
   # @example
   #   SidekiqPrometheus.configure do |config|
   #     config.base_labels = { service: 'images_api' }
@@ -69,16 +72,11 @@ module SidekiqPrometheus
   #   end
   def configure
     yield self
-  end
-
-  ##
-  # Configure and call setup immediately after
-  def configure!
-    yield self
     setup
   end
 
-  ##
+  alias configure! configure
+
   # Helper method for +gc_metrics_enabled+ configuration setting
   # @return [Boolean] defaults to true
   def gc_metrics_enabled?
@@ -117,17 +115,19 @@ module SidekiqPrometheus
   # Prometheus client metric registry
   # @return [Prometheus::Client::Registry]
   def registry
-    @registry ||= client.registry
+    @registry ||= client::Registry.new
   end
 
   ##
   # register metrics and instrument sidekiq
   def setup
+    return false if @setup_complete
     SidekiqPrometheus::Metrics.register_sidekiq_job_metrics
     SidekiqPrometheus::Metrics.register_sidekiq_gc_metric if gc_metrics_enabled?
     SidekiqPrometheus::Metrics.register_sidekiq_worker_gc_metrics if gc_metrics_enabled? && periodic_metrics_enabled?
     SidekiqPrometheus::Metrics.register_sidekiq_global_metrics if global_metrics_enabled? && periodic_metrics_enabled?
     sidekiq_setup
+    self.setup_complete = true
   end
 
   ##
@@ -162,12 +162,6 @@ module SidekiqPrometheus
         BindAddress: '127.0.0.1',
       )
     end
-  end
-
-  private
-
-  def metrics
-    SidekiqPrometheus::Metrics
   end
 end
 

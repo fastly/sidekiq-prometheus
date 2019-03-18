@@ -8,7 +8,8 @@ require 'sidekiq/cli'
 
 RSpec.describe SidekiqPrometheus do
   before do
-    SidekiqPrometheus.registry = Prometheus::Client::Registry.new
+    described_class.registry = Prometheus::Client::Registry.new
+    described_class.setup_complete = false
   end
 
   it 'has a version number' do
@@ -27,10 +28,14 @@ RSpec.describe SidekiqPrometheus do
       end
 
       expect(described_class.base_labels).to eq base
+    end
 
-      described_class.configure do |c|
-        c.base_labels = nil
-      end
+    it 'calls setup' do
+      allow(described_class).to receive(:setup)
+
+      described_class.configure {}
+
+      expect(described_class).to have_received(:setup)
     end
   end
 
@@ -71,6 +76,17 @@ RSpec.describe SidekiqPrometheus do
       events = Sidekiq.options[:lifecycle_events]
       expect(events[:startup].first).to be_kind_of(Proc)
       expect(events[:shutdown].first).to be_kind_of(Proc)
+    end
+
+    it 'can only be called once' do
+      allow(Object).to receive(:const_defined?).with('Sidekiq::Enterprise').and_return(true)
+      allow(SidekiqPrometheus::Metrics).to receive(:register_sidekiq_job_metrics)
+
+      described_class.setup
+      result = described_class.setup
+
+      expect(result).to be false
+      expect(SidekiqPrometheus::Metrics).to have_received(:register_sidekiq_job_metrics).once
     end
   end
 
