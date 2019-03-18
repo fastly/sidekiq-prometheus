@@ -28,10 +28,14 @@ RSpec.describe SidekiqPrometheus do
       end
 
       expect(described_class.base_labels).to eq base
+    end
 
-      described_class.configure do |c|
-        c.base_labels = nil
-      end
+    it 'calls setup' do
+      allow(described_class).to receive(:setup)
+
+      described_class.configure {}
+
+      expect(described_class).to have_received(:setup)
     end
   end
 

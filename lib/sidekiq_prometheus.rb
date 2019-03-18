@@ -63,7 +63,7 @@ module SidekiqPrometheus
   end
 
   ##
-  # Configure SidekiqPrometheus
+  # Configure SidekiqPrometheus and setup for reporting
   # @example
   #   SidekiqPrometheus.configure do |config|
   #     config.base_labels = { service: 'images_api' }
@@ -72,16 +72,11 @@ module SidekiqPrometheus
   #   end
   def configure
     yield self
-  end
-
-  ##
-  # Configure and call setup immediately after
-  def configure!
-    yield self
     setup
   end
 
-  ##
+  alias configure! configure
+
   # Helper method for +gc_metrics_enabled+ configuration setting
   # @return [Boolean] defaults to true
   def gc_metrics_enabled?
