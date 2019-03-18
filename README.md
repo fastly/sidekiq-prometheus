@@ -1,5 +1,10 @@
 # Sidekiq Prometheus
 
+
+[![Status](https://travis-ci.org/fastly/sidekiq-prometheus.svg?branch=master)](https://travis-ci.org/fastly/sidekiq-prometheus)
+![Gem](https://img.shields.io/gem/v/sidekiq_prometheus.svg?color=blue)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+
 Prometheus Instrumentation for Sidekiq. This gem provides:
 
 * Sidekiq server middleware for reporting job metrics
