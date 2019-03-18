@@ -51,7 +51,7 @@ $curl http://localhost:9359/metrics
 
 You can configure the gem by calling `configure`:
 
-```
+```ruby
 SidekiqPrometheus.configure do |config|
   config.base_labels = { service: 'kubernandos_api' }
 end
@@ -61,7 +61,7 @@ end
 
 If you are running multiple services that will be reporting Sidekiq metrics you will want to take advantage of the `base_labels` configuration option. For example:
 
-```
+```ruby
 SidekiqPrometheus.configure do |config|
   config.base_labels  = { service: 'image_api' }
   config.metrics_port = 9090
@@ -78,7 +78,7 @@ end
 * `metrics_port`: Port on which the rack server will listen. Defaults to `9359`
 * `registry`: An instance of `Prometheus::Client::Registry`. If you have a registry with defined metrics you can use this option to pass in your registry.
 
-```
+```ruby
 SidekiqPrometheus.configure do |config|
   config.base_labels                   = { service: 'myapp' }
   config.gc_metrics_enabled            = false
@@ -91,7 +91,7 @@ end
 
 Custom labels may be added by defining the `prometheus_labels` method in the worker class:
 
-```
+```ruby
 class SomeWorker
   include Sidekiq::Worker
 
@@ -160,6 +160,78 @@ which ensures that metrics are only reported once per cluster.
 | sidekiq_redis_expires | gauge | Number of redis keys with expiry set |
 
 The global metrics are reported with the only the `base_labels` with the exception of `sidekiq_enqueued` which will add a `queue` label and record a metric per Sidekiq queue.
+
+## Custom Worker Metrics
+
+There are a few different ways to register custom metrics with SidekiqPrometheus. Each custom metric should be defined as a Hash with the following form:
+
+```ruby
+{
+  name:        :metric_name,
+  type:        :gauge,
+  docstring:   'description',
+  base_labels: { label_name: 'label_text' },
+}
+```
+
+* `:name` (required) - Unique name of the metric and should be a symbol.
+* `:type` (required) - Prometheus metric type. Supported values are: `:counter`, `:gauge`, `:histogram`, and `:summary`.
+* `:docstring` (required) - Human readable description of the metric.
+* `:base_labels` (optional) - Hash of labels that will be applied to every instance of this metric.
+
+#### Registering custom metrics:
+
+Registering a set of custom metrics is done by defining `custom_metrics` in the `configure` block:
+
+```ruby
+SidekiqPrometheus.configure do |config|
+  config.custom_metrics = [
+    { name: :imported_records, type: :counter, :docstring: 'Count of successfully imported records' },
+    { name: :failed_records,   type: counter:, :docstring: 'Count of failed records' },
+  ]
+end
+```
+
+Metrics can also be registered directly. This must done *after* `SidekiqPrometheus.configure` or `setup` has been run.
+
+```ruby
+SidekiqPrometheus::Metrics.register(name: :logged_in_users, type: :gauge, docstring: 'Logged in users')
+```
+
+There is also a method to register more than one metric at a time:
+
+```ruby
+customer_worker_metrics = [
+  {
+    name: :file_count, type: :counter, docstring: 'Number of active files',
+    name: :file_size,  type: :gauge,   docstring: 'Size of files in bytes',    
+  }
+]
+
+SidekiqPrometheus::Metrics.register_metrics(customer_worker_metrics)
+```
+
+#### Using custom metrics:
+
+Once metrics are registered they can be used in your Sidekiq workers.
+
+```ruby
+class ImportWorker
+  include Sidekiq::Worker
+
+  LABELS = {}
+
+  def perform(*args)
+    # worker code
+
+    SidekiqPrometheus[:file_count].increment(LABELS, new_file_count)
+    SidekiqPrometheus[:file_size].set(LABELS, total_file_size)
+  end
+
+end
+```
+
+See the [documentation of the Prometheus::Client library](https://github.com/prometheus/client_ruby) for all of the available options for setting metric values.
 
 ## Development
 
