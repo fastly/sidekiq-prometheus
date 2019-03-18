@@ -64,15 +64,8 @@ RSpec.describe SidekiqPrometheus do
   end
 
   describe '.register_custom_metrics' do
-    let(:logger) { double 'logger', warn: nil }
-
-    before do
-      Sidekiq.logger = logger
-    end
-
     after do
       described_class.custom_metrics = []
-      Sidekiq.logger = Logger.new('/dev/null')
     end
 
     it 'does nothing if no custom metrics are defined' do
@@ -83,13 +76,12 @@ RSpec.describe SidekiqPrometheus do
       expect(SidekiqPrometheus::Metrics).not_to have_received(:register_metrics)
     end
 
-    it 'skips registering and logs a warning if hash keys are missing' do
+    it 'raises an error if custom_metrics is not an Array' do
       allow(SidekiqPrometheus::Metrics).to receive(:register_metrics)
 
-      described_class.custom_metrics = [{ name: :foo, type: :gauge }]
-      described_class.register_custom_metrics
+      described_class.custom_metrics = { name: :foo, type: :gauge, docstring: 'asd' }
 
-      expect(logger).to have_received(:warn).with('[SidekiqPrometheus] Skipping custom metrics. Hash does not define required keys')
+      expect { described_class.register_custom_metrics }.to raise_error(SidekiqPrometheus::Error)
     end
 
     it 'registers the custom metrics' do
@@ -104,7 +96,6 @@ RSpec.describe SidekiqPrometheus do
       described_class.custom_metrics = custom
       described_class.register_custom_metrics
 
-      expect(logger).not_to have_received(:warn)
       expect(described_class.get(:rpm)).to be_kind_of(Prometheus::Client::Gauge)
     end
   end

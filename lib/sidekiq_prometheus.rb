@@ -140,12 +140,9 @@ module SidekiqPrometheus
   def register_custom_metrics
     return if custom_metrics.empty?
 
-    expected_keys = %i[name type docstring].sort
-    if custom_metrics.all? { |m| (m.keys.sort & expected_keys) == expected_keys }
-      SidekiqPrometheus::Metrics.register_metrics(custom_metrics)
-    else
-      Sidekiq.logger.warn('[SidekiqPrometheus] Skipping custom metrics. Hash does not define required keys')
-    end
+    raise SidekiqPrometheus::Error, 'custom_metrics is not an array.' unless custom_metrics.is_a?(Array)
+
+    SidekiqPrometheus::Metrics.register_metrics(custom_metrics)
   end
 
   ##
@@ -197,6 +194,8 @@ module SidekiqPrometheus
     end
   end
 end
+
+class SidekiqPrometheus::Error < StandardError; end
 
 require 'sidekiq_prometheus/job_metrics'
 require 'sidekiq_prometheus/metrics'
