@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v0.9.1"></a>
+## [v0.9.1](https://github.com/fastly/sidekiq-prometheus/compare/v0.9.0...v0.9.1) (2019-07-08)
+
+### Bug Fixes
+
+* properly alias configure!
+
+
 <a name="v0.9.0"></a>
 ## [v0.9.0](https://github.com/fastly/sidekiq-prometheus/compare/v0.8.1...v0.9.0) (2019-03-18)
 
