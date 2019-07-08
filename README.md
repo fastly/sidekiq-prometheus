@@ -191,8 +191,8 @@ Registering a set of custom metrics is done by defining `custom_metrics` in the 
 ```ruby
 SidekiqPrometheus.configure do |config|
   config.custom_metrics = [
-    { name: :imported_records, type: :counter, :docstring: 'Count of successfully imported records' },
-    { name: :failed_records,   type: counter:, :docstring: 'Count of failed records' },
+    { name: :imported_records, type: :counter, docstring: 'Count of successfully imported records' },
+    { name: :failed_records,   type: counter:, docstring: 'Count of failed records' },
   ]
 end
 ```
