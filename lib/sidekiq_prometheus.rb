@@ -91,8 +91,6 @@ module SidekiqPrometheus
     setup
   end
 
-  alias configure! configure
-
   # Helper method for +gc_metrics_enabled+ configuration setting
   # @return [Boolean] defaults to true
   def gc_metrics_enabled?
@@ -124,6 +122,7 @@ module SidekiqPrometheus
   end
 
   class << self
+    alias configure! configure
     alias get []
   end
 
