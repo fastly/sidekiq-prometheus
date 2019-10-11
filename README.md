@@ -58,24 +58,25 @@ You can configure the gem by calling `configure`:
 
 ```ruby
 SidekiqPrometheus.configure do |config|
-  config.base_labels = { service: 'kubernandos_api' }
+  config.preset_labels = { service: 'kubernandos_api' }
 end
 ```
 
 `configure` will automatically call setup so
 
-If you are running multiple services that will be reporting Sidekiq metrics you will want to take advantage of the `base_labels` configuration option. For example:
+If you are running multiple services that will be reporting Sidekiq metrics you will want to take advantage of the `preset_labels` configuration option. For example:
 
 ```ruby
 SidekiqPrometheus.configure do |config|
-  config.base_labels  = { service: 'image_api' }
+  config.preset_labels  = { service: 'image_api' }
   config.metrics_port = 9090
 end
 ```
 
 #### Configuration options
 
-* `base_labels`: Hash of labels that will be included with every metric when they are registered.
+* `preset_labels`: Hash of labels that will be included with every metric when they are registered.
+* `custom_labels`: Array of names for each label that will be passed during the reporting. 
 * `gc_metrics_enabled`: Boolean that determines whether to record object allocation metrics per job. The default is `true`. Setting this to `false` if you don't need this metric.
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
 * `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defaults to `true`.
@@ -85,7 +86,8 @@ end
 
 ```ruby
 SidekiqPrometheus.configure do |config|
-  config.base_labels                   = { service: 'myapp' }
+  config.preset_labels                 = { service: 'myapp' }
+  config.custom_labels                 = [:worker_class, :job_type, :any_other_label]
   config.gc_metrics_enabled            = false
   config.global_metrics_enabled        = true
   config.periodic_metrics_enabled      = true
@@ -94,7 +96,8 @@ SidekiqPrometheus.configure do |config|
 end
 ```
 
-Custom labels may be added by defining the `prometheus_labels` method in the worker class:
+Custom labels may be added by defining the `prometheus_labels` method in the worker class, 
+prior you need to register the custom labels as of the above example:
 
 ```ruby
 class SomeWorker
@@ -164,7 +167,7 @@ which ensures that metrics are only reported once per cluster.
 | sidekiq_redis_keys | gauge | Number of redis keys |
 | sidekiq_redis_expires | gauge | Number of redis keys with expiry set |
 
-The global metrics are reported with the only the `base_labels` with the exception of `sidekiq_enqueued` which will add a `queue` label and record a metric per Sidekiq queue.
+The global metrics are reported with the only the `preset_labels` with the exception of `sidekiq_enqueued` which will add a `queue` label and record a metric per Sidekiq queue.
 
 ## Custom Worker Metrics
 
@@ -175,14 +178,14 @@ There are a few different ways to register custom metrics with SidekiqPrometheus
   name:        :metric_name,
   type:        :gauge,
   docstring:   'description',
-  base_labels: { label_name: 'label_text' },
+  preset_labels: { label_name: 'label_text' },
 }
 ```
 
 * `:name` (required) - Unique name of the metric and should be a symbol.
 * `:type` (required) - Prometheus metric type. Supported values are: `:counter`, `:gauge`, `:histogram`, and `:summary`.
 * `:docstring` (required) - Human readable description of the metric.
-* `:base_labels` (optional) - Hash of labels that will be applied to every instance of this metric.
+* `:preset_labels` (optional) - Hash of labels that will be applied to every instance of this metric.
 
 #### Registering custom metrics:
 

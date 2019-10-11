@@ -32,8 +32,8 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       expect(registry).to have_received(:get).with(:sidekiq_job_success)
       expect(registry).to have_received(:get).with(:sidekiq_job_allocated_objects)
 
-      expect(metric).to have_received(:increment).twice.with(labels)
-      expect(metric).to have_received(:observe).twice.with(labels, kind_of(Numeric))
+      expect(metric).to have_received(:increment).twice.with(labels: labels)
+      expect(metric).to have_received(:observe).twice.with(kind_of(Numeric), labels: labels)
     end
 
     it 'returns the result from the yielded block' do
@@ -57,7 +57,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       expect(registry).not_to have_received(:get).with(:sidekiq_job_duration)
       expect(registry).not_to have_received(:get).with(:sidekiq_job_success)
 
-      expect(metric).to have_received(:increment).twice.with(labels)
+      expect(metric).to have_received(:increment).twice.with(labels: labels)
       expect(metric).not_to have_received(:observe)
     end
   end

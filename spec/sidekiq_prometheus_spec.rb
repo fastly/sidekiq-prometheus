@@ -24,10 +24,10 @@ RSpec.describe SidekiqPrometheus do
     it 'configures' do
       base = { label: 'label' }
       described_class.configure do |c|
-        c.base_labels = base
+        c.preset_labels = base
       end
 
-      expect(described_class.base_labels).to eq base
+      expect(described_class.preset_labels).to eq base
     end
 
     it 'calls setup' do
