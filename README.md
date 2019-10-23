@@ -1,5 +1,6 @@
 # Sidekiq Prometheus
 
+test travis builds
 
 [![Status](https://travis-ci.org/fastly/sidekiq-prometheus.svg?branch=master)](https://travis-ci.org/fastly/sidekiq-prometheus)
 ![Gem](https://img.shields.io/gem/v/sidekiq_prometheus.svg?color=blue)
