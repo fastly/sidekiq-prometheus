@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.58.0'
 
-  spec.add_runtime_dependency 'prometheus-client', '~> 0.8.0'
+  spec.add_runtime_dependency 'prometheus-client', '~> 0.10.0'
   spec.add_runtime_dependency 'rack'
   spec.add_runtime_dependency 'sidekiq', '~> 5.1'
 end

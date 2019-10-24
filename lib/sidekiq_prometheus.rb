@@ -14,10 +14,10 @@ end
 
 module SidekiqPrometheus
   class << self
-    # @return [Hash] Base labels applied to every registered metric
-    attr_accessor :base_labels
+    # @return [Hash] Preset labels applied to every registered metric
+    attr_accessor :preset_labels
 
-    # @return [Hash] Custom labels applied to specific metrics
+    # @return [Hash{Symbol => Array<Symbol>}] Custom labels applied to specific metrics
     attr_accessor :custom_labels
 
     # @return [Array] Custom metrics that will be registered on setup.
@@ -27,12 +27,12 @@ module SidekiqPrometheus
     #       name: :metric_name,
     #       type: :prometheus_metric_type,
     #       docstring: 'Description of the metric',
-    #       base_labels : { label: 'value' },
+    #       preset_labels : { label: 'value' },
     #     }
     #   ]
     # @note Each element of the array is a hash and must have the required keys: `:name`, `:type`, and `:docstring`.
     #   The values for `:name` and `:type` should be symbols and `:docstring` should be a string.
-    #   `base_labels` is optional and, if used, must be a hash of labels that will be included on every instance of this metric.
+    #   `preset_labels` is optional and, if used, must be a hash of labels that will be included on every instance of this metric.
     attr_accessor :custom_metrics
 
     # @return [Boolean] Setting to control enabling/disabling GC metrics. Default: true
@@ -82,8 +82,8 @@ module SidekiqPrometheus
   # Configure SidekiqPrometheus and setup for reporting
   # @example
   #   SidekiqPrometheus.configure do |config|
-  #     config.base_labels = { service: 'images_api' }
-  #     config.custom_labels = { sidekiq_job_count: { object_klass: nil } }
+  #     config.preset_labels = { service: 'images_api' }
+  #     config.custom_labels = { sidekiq_job_count: [:custom_label_1, :custom_label_2] } }
   #     config.gc_metrics_enabled = true
   #   end
   def configure

@@ -6,6 +6,7 @@ module SidekiqPrometheus::Metrics
   UNKNOWN = 'unknown'
 
   VALID_TYPES = %i[counter gauge histogram summary].freeze
+  JOB_LABELS = %i[class queue].freeze
   SIDEKIQ_GLOBAL_METRICS = [
     { name:      :sidekiq_workers_size,
       type:      :gauge,
@@ -15,10 +16,12 @@ module SidekiqPrometheus::Metrics
       docstring: 'Total Dead Size', },
     { name:      :sidekiq_enqueued,
       type:      :gauge,
-      docstring: 'Total Size of all known queues', },
+      docstring: 'Total Size of all known queues',
+      labels:    %i[queue], },
     { name:      :sidekiq_queue_latency,
       type:      :summary,
-      docstring: 'Latency (in seconds) of all queues', },
+      docstring: 'Latency (in seconds) of all queues',
+      labels:    %i[queue], },
     { name:      :sidekiq_failed,
       type:      :gauge,
       docstring: 'Number of job executions which raised an error', },
@@ -42,30 +45,37 @@ module SidekiqPrometheus::Metrics
       docstring: 'Used memory peak from Redis.info', },
     { name:      :sidekiq_redis_keys,
       type:      :gauge,
-      docstring: 'Number of redis keys', },
+      docstring: 'Number of redis keys',
+      labels:     %i[database], },
     { name:      :sidekiq_redis_expires,
       type:      :gauge,
-      docstring: 'Number of redis keys with expiry set', },
+      docstring: 'Number of redis keys with expiry set',
+      labels:     %i[database], },
   ].freeze
   SIDEKIQ_JOB_METRICS = [
     { name:      :sidekiq_job_count,
       type:      :counter,
-      docstring: 'Count of Sidekiq jobs', },
+      docstring: 'Count of Sidekiq jobs',
+      labels:    JOB_LABELS, },
     { name:      :sidekiq_job_duration,
       type:      :histogram,
-      docstring: 'Sidekiq job processing duration', },
+      docstring: 'Sidekiq job processing duration',
+      labels:    JOB_LABELS, },
     { name:      :sidekiq_job_failed,
       type:      :counter,
-      docstring: 'Count of failed Sidekiq jobs', },
+      docstring: 'Count of failed Sidekiq jobs',
+      labels:    JOB_LABELS, },
     { name:      :sidekiq_job_success,
       type:      :counter,
-      docstring: 'Count of successful Sidekiq jobs', },
+      docstring: 'Count of successful Sidekiq jobs',
+      labels:    JOB_LABELS, },
   ].freeze
   SIDEKIQ_GC_METRIC = {
     name:      :sidekiq_job_allocated_objects,
     type:      :histogram,
     docstring: 'Count of ruby objects allocated by a Sidekiq job',
     buckets:   [10, 50, 100, 500, 1_000, 2_500, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 5_000_000, 10_000_000, 25_000_000],
+    labels:    JOB_LABELS,
   }.freeze
   SIDEKIQ_WORKER_GC_METRICS = [
     { name:      :sidekiq_allocated_objects,
@@ -130,21 +140,26 @@ module SidekiqPrometheus::Metrics
   # @param types [Symbol] type of metric to register. Valid types: %w(counter gauge summary histogram)
   # @param name [Symbol] name of metric
   # @param docstring [String] help text for metric
-  # @param base_labels [Hash] Optional hash of base labels to use for every instance of this metric
+  # @param labels [Array] Optionally an array of labels to configure for every instance of this metric
+  # @param preset_labels [Hash] Optionally a Hash of labels to use for every instance of this metric
   # @param buckets [Hash] Optional hash of bucket values. Only used for histogram metrics.
-  def register(type:, name:, docstring:, base_labels: {}, buckets: nil)
+  def register(type:, name:, docstring:, labels: [], preset_labels: {}, buckets: nil)
     raise InvalidMetricType, type unless VALID_TYPES.include? type
 
-    custom_labels = SidekiqPrometheus.custom_labels[name]
+    # Aggregate all preset labels
+    all_preset_labels = preset_labels.dup
+    all_preset_labels.merge!(SidekiqPrometheus.preset_labels) if SidekiqPrometheus.preset_labels
 
-    base_labels.merge! custom_labels if custom_labels&.is_a?(Hash)
-    base_labels.merge! SidekiqPrometheus.base_labels if SidekiqPrometheus.base_labels
+    # Aggregate all labels
+    all_labels = labels | SidekiqPrometheus.custom_labels.fetch(name, []) | all_preset_labels.keys
 
-    args = [name.to_sym, docstring]
-    args << base_labels
-    args << buckets if buckets
+    options = { docstring: docstring,
+                labels: all_labels,
+                preset_labels: all_preset_labels, }
 
-    registry.send(type, *args)
+    options[:buckets] = buckets if buckets
+
+    registry.send(type, name.to_sym, options)
   end
 
   def unregister(name:)

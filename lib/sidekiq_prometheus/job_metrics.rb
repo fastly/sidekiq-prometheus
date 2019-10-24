@@ -15,20 +15,20 @@ class SidekiqPrometheus::JobMetrics
       # In case the labels have changed after the worker perform method has been called
       labels.merge!(custom_labels(worker))
 
-      registry[:sidekiq_job_duration].observe(labels, duration)
-      registry[:sidekiq_job_success].increment(labels)
+      registry[:sidekiq_job_duration].observe(duration, labels: labels)
+      registry[:sidekiq_job_success].increment(labels: labels)
 
       if SidekiqPrometheus.gc_metrics_enabled?
         allocated = GC.stat(:total_allocated_objects) - before
-        registry[:sidekiq_job_allocated_objects].observe(labels, allocated)
+        registry[:sidekiq_job_allocated_objects].observe(allocated, labels: labels)
       end
 
       result
     rescue StandardError => e
-      registry[:sidekiq_job_failed].increment(labels)
+      registry[:sidekiq_job_failed].increment(labels: labels)
       raise e
     ensure
-      registry[:sidekiq_job_count].increment(labels)
+      registry[:sidekiq_job_count].increment(labels: labels)
     end
   end
 

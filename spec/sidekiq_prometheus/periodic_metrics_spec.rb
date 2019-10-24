@@ -53,9 +53,9 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
 
       reporter.report_gc_metrics
 
-      expect(metric).to have_received(:increment).with({}, kind_of(Numeric)).exactly(described_class::GC_STATS[:counters].size).times
+      expect(metric).to have_received(:increment).with(by: kind_of(Numeric), labels: {}).exactly(described_class::GC_STATS[:counters].size).times
       # plus one because rss
-      expect(metric).to have_received(:set).with({}, kind_of(Numeric)).exactly(described_class::GC_STATS[:gauges].size + 1).times
+      expect(metric).to have_received(:set).with(kind_of(Numeric), labels: {}).exactly(described_class::GC_STATS[:gauges].size + 1).times
     end
   end
 
@@ -83,12 +83,12 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
         expect(sidekiq_stats).to have_received(stat)
       end
 
-      expect(metric).to have_received(:set).with({}, num).exactly(described_class::GLOBAL_STATS.size).times
+      expect(metric).to have_received(:set).with(num, labels: {}).exactly(described_class::GLOBAL_STATS.size).times
 
-      expect(metric).to have_received(:set).with({ queue: queue.name }, queue.size)
-      expect(metric).to have_received(:observe).with({ queue: queue.name }, queue.latency)
-      expect(metric).to have_received(:set).with({ queue: another_queue.name }, another_queue.size)
-      expect(metric).to have_received(:observe).with({ queue: another_queue.name }, another_queue.latency)
+      expect(metric).to have_received(:set).with(queue.size, labels: { queue: queue.name })
+      expect(metric).to have_received(:observe).with(queue.latency, labels: { queue: queue.name })
+      expect(metric).to have_received(:set).with(another_queue.size, labels: { queue: another_queue.name })
+      expect(metric).to have_received(:observe).with(another_queue.latency, labels: { queue: another_queue.name })
     end
   end
 
@@ -116,13 +116,13 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
 
       reporter.report_redis_metrics
 
-      expect(metric).to have_received(:set).with({}, 1)
-      expect(metric).to have_received(:set).with({}, 1024)
-      expect(metric).to have_received(:set).with({}, 2048)
-      expect(metric).to have_received(:set).with({ database: 'db0' }, 1)
-      expect(metric).to have_received(:set).with({ database: 'db0' }, 0)
-      expect(metric).to have_received(:set).with({ database: 'db1' }, 100)
-      expect(metric).to have_received(:set).with({ database: 'db1' }, 10)
+      expect(metric).to have_received(:set).with(1, labels: {})
+      expect(metric).to have_received(:set).with(1024, labels: {})
+      expect(metric).to have_received(:set).with(2048, labels: {})
+      expect(metric).to have_received(:set).with(1, labels: { database: 'db0' })
+      expect(metric).to have_received(:set).with(0, labels: { database: 'db0' })
+      expect(metric).to have_received(:set).with(100, labels: { database: 'db1' })
+      expect(metric).to have_received(:set).with(10, labels: { database: 'db1' })
     end
   end
 end
