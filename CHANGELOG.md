@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v1.0.0"></a>
+## [v1.0.0](https://github.com/fastly/sidekiq-prometheus/compare/v0.9.1...v1.0.0) (2019-10-24)
+
+### Pull Requests
+
+* Merge pull request [#9](https://github.com/fastly/sidekiq-prometheus/issues/9) from we4tech/features/update-prometheus-client
+
+
 <a name="v0.9.1"></a>
 ## [v0.9.1](https://github.com/fastly/sidekiq-prometheus/compare/v0.9.0...v0.9.1) (2019-07-08)
 
