@@ -247,6 +247,11 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
+## Contributors
+
+* Lukas Eklund  ([@leklund](https://github.com/leklund))
+* NHM Tanveer Hossain Khan ([@we4tech](https://github.com/we4tech))
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/fastly/sidekiq-prometheus. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.

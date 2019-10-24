@@ -7,7 +7,7 @@ require 'sidekiq_prometheus/version'
 Gem::Specification.new do |spec|
   spec.name          = 'sidekiq_prometheus'
   spec.version       = SidekiqPrometheus::VERSION
-  spec.authors       = ['Lukas Eklund']
+  spec.authors       = ['Lukas Eklund', 'NHM Tanveer Hossain Khan']
   spec.email         = ['leklund@fastly.com']
 
   spec.summary       = 'Prometheus Instrumentation for Sidekiq'
