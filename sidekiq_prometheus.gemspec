@@ -29,5 +29,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'prometheus-client', '~> 0.10.0'
   spec.add_runtime_dependency 'rack'
-  spec.add_runtime_dependency 'sidekiq', '~> 5.1'
+  spec.add_runtime_dependency 'sidekiq', '> 5.1'
 end
