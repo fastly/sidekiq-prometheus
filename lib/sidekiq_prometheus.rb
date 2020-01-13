@@ -193,7 +193,7 @@ module SidekiqPrometheus
           run ->(_) { [301, { 'Location' => '/metrics' }, []] }
         },
         Port: SidekiqPrometheus.metrics_port,
-        BindAddress: SidekiqPrometheus.metrics_host,
+        Host: SidekiqPrometheus.metrics_host,
       )
     end
   end
