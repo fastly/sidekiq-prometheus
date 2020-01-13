@@ -188,7 +188,7 @@ module SidekiqPrometheus
           run ->(_) { [301, { 'Location' => '/metrics' }, []] }
         },
         Port: SidekiqPrometheus.metrics_port,
-        BindAddress: '127.0.0.1',
+        BindAddress: 'localhost',
       )
     end
   end
