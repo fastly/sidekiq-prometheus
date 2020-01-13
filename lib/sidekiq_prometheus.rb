@@ -47,6 +47,9 @@ module SidekiqPrometheus
     # @return [Integer] Interval in seconds to record metrics. Default: 30
     attr_accessor :periodic_reporting_interval
 
+    # @return [String] Host on which the metrics server will listen. Default: localhost
+    attr_accessor :metrics_host
+
     # @return [Integer] Port on which the metrics server will listen. Default: 9357
     attr_accessor :metrics_port
 
@@ -66,6 +69,7 @@ module SidekiqPrometheus
   self.periodic_metrics_enabled = true
   self.global_metrics_enabled = true
   self.periodic_reporting_interval = 30
+  self.metrics_host = 'localhost'
   self.metrics_port = 9359
   self.custom_labels = {}
   self.custom_metrics = []
@@ -179,7 +183,8 @@ module SidekiqPrometheus
 
   ##
   # Start a new Prometheus exporter in a new thread.
-  # Will listen on SidekiqPrometheus.metrics_port
+  # Will listen on SidekiqPrometheus.metrics_host and
+  # SidekiqPrometheus.metrics_port
   def metrics_server
     @_metrics_server ||= Thread.new do
       Rack::Handler::WEBrick.run(
@@ -188,7 +193,7 @@ module SidekiqPrometheus
           run ->(_) { [301, { 'Location' => '/metrics' }, []] }
         },
         Port: SidekiqPrometheus.metrics_port,
-        BindAddress: 'localhost',
+        BindAddress: SidekiqPrometheus.metrics_host,
       )
     end
   end

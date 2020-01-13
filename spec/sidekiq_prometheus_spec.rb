@@ -146,7 +146,7 @@ RSpec.describe SidekiqPrometheus do
 
         sleep 0.5
 
-        http = Net::HTTP.new('localhost', SidekiqPrometheus.metrics_port)
+        http = Net::HTTP.new(SidekiqPrometheus.metrics_host, SidekiqPrometheus.metrics_port)
         res = http.request(Net::HTTP::Get.new('/metrics'))
 
         expect(res.code).to eq '200'
