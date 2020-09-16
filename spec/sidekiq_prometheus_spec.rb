@@ -63,6 +63,18 @@ RSpec.describe SidekiqPrometheus do
     end
   end
 
+  describe '.metrics_server_enabled?' do
+    it 'returns true by default' do
+      expect(described_class.metrics_server_enabled).to be true
+      expect(described_class.metrics_server_enabled?).to be true
+    end
+
+    it 'returns false when metrics_server_enabled == false' do
+      described_class.metrics_server_enabled = false
+      expect(described_class.metrics_server_enabled?).to be false
+    end
+  end
+
   describe '.register_custom_metrics' do
     after do
       described_class.custom_metrics = []

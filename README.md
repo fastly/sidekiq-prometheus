@@ -81,6 +81,7 @@ end
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
 * `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defaults to `true`.
 * `periodic_reporting_interval`: interval in seconds for reporting periodic metrics. Default: `30`
+* `metrics_server_enabled`: Boolean that determines whether to run the rack server. Defaults to `true`
 * `metrics_host`: Host on which the rack server will listen. Defaults to
   `localhost`
 * `metrics_port`: Port on which the rack server will listen. Defaults to `9359`
@@ -94,6 +95,7 @@ SidekiqPrometheus.configure do |config|
   config.global_metrics_enabled        = true
   config.periodic_metrics_enabled      = true
   config.periodic_reporting_interval   = 20
+  config.metrics_server_enabled        = true
   config.metrics_port                  = 8675
 end
 ```

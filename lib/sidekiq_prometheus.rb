@@ -47,6 +47,9 @@ module SidekiqPrometheus
     # @return [Integer] Interval in seconds to record metrics. Default: 30
     attr_accessor :periodic_reporting_interval
 
+    # @return [Boolean] Setting to control enabling/disabling the metrics server. Default: true
+    attr_accessor :metrics_server_enabled
+
     # @return [String] Host on which the metrics server will listen. Default: localhost
     attr_accessor :metrics_host
 
@@ -69,6 +72,7 @@ module SidekiqPrometheus
   self.periodic_metrics_enabled = true
   self.global_metrics_enabled = true
   self.periodic_reporting_interval = 30
+  self.metrics_server_enabled = true
   self.metrics_host = 'localhost'
   self.metrics_port = 9359
   self.custom_labels = {}
@@ -115,6 +119,13 @@ module SidekiqPrometheus
   # @return [Boolean] defaults to true if +Sidekiq::Enterprise+ is available
   def periodic_metrics_enabled?
     periodic_metrics_enabled
+  end
+
+  ##
+  # Helper method for +metrics_server_enabled+ configuration setting
+  # @return [Boolean] defaults to true
+  def metrics_server_enabled?
+    metrics_server_enabled
   end
 
   ##
@@ -176,8 +187,10 @@ module SidekiqPrometheus
         config.on(:shutdown) { SidekiqPrometheus::PeriodicMetrics.reporter.stop }
       end
 
-      config.on(:startup)  { SidekiqPrometheus.metrics_server }
-      config.on(:shutdown) { SidekiqPrometheus.metrics_server.kill }
+      if metrics_server_enabled?
+        config.on(:startup)  { SidekiqPrometheus.metrics_server }
+        config.on(:shutdown) { SidekiqPrometheus.metrics_server.kill }
+      end
     end
   end
 
