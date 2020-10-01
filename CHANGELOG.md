@@ -1,5 +1,18 @@
 CHANGELOG
 
+<a name="v1.2.0"></a>
+## [v1.2.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.1.0...v1.2.0) (2020-10-01)
+
+### Feature
+
+* allow the metrics host to be disabled with a configuration option
+* use prometheus-client ~> 2.0
+
+### Pull Requests
+
+* Merge pull request [#17](https://github.com/fastly/sidekiq-prometheus/issues/17) from jetpks/add-option-to-disable-metrics-server
+* Merge pull request [#15](https://github.com/fastly/sidekiq-prometheus/issues/15) from silicakes/master
+
 <a name="v1.1.0"></a>
 ## [v1.1.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.0.1...v1.1.0) (2020-02-12)
 
