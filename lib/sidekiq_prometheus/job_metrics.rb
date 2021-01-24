@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 class SidekiqPrometheus::JobMetrics
-  def call(worker, _job, queue)
+  def call(worker, job, queue)
     before = GC.stat(:total_allocated_objects) if SidekiqPrometheus.gc_metrics_enabled?
 
-    labels = { class: worker.class.to_s, queue: queue }
+    # If we're using a wrapper class, like ActiveJob, use the "wrapped"
+    # attribute to expose the underlying thing.
+    labels = {
+      class: job['wrapped'] || worker.class.to_s,
+      queue: queue,
+    }
 
     begin
       labels.merge!(custom_labels(worker))
