@@ -1,7 +1,7 @@
 # Sidekiq Prometheus
 
 
-[![Status](https://travis-ci.org/fastly/sidekiq-prometheus.svg?branch=master)](https://travis-ci.org/fastly/sidekiq-prometheus)
+[![Status](https://travis-ci.org/fastly/sidekiq-prometheus.svg?branch=main)](https://travis-ci.org/fastly/sidekiq-prometheus)
 ![Gem](https://img.shields.io/gem/v/sidekiq_prometheus.svg?color=blue)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
@@ -272,7 +272,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the SidekiqPrometheus project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/fastly/sidekiq-prometheus/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the SidekiqPrometheus project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/fastly/sidekiq-prometheus/blob/main/CODE_OF_CONDUCT.md).
 
 # Metadata
 

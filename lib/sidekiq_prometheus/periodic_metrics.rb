@@ -8,7 +8,7 @@
 # one worker.
 #
 # @see https://github.com/mperham/sidekiq/wiki/Ent-Leader-Election
-# @see https://github.com/mperham/sidekiq/blob/master/lib/sidekiq/api.rb
+# @see https://github.com/mperham/sidekiq/blob/main/lib/sidekiq/api.rb
 
 class SidekiqPrometheus::PeriodicMetrics
   # @return [Boolean] When +true+ will stop the reporting loop.
