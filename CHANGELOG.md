@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v1.3.0"></a>
+## [v1.3.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.2.0...v1.3.0) (2021-03-26)
+
+### Pull Requests
+
+* Merge pull request [#22](https://github.com/fastly/sidekiq-prometheus/issues/22) from mirubiri/add-active-job-support
+* Merge pull request [#20](https://github.com/fastly/sidekiq-prometheus/issues/20) from fastly/aw/move-to-main
+
 <a name="v1.2.0"></a>
 ## [v1.2.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.1.0...v1.2.0) (2020-10-01)
 
