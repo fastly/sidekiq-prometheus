@@ -14,6 +14,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
   let(:metric) { double 'Metric', increment: true, observe: true }
   let(:worker) { FakeWork.new }
   let(:queue) { 'bbq' }
+  let(:job) { {} }
   let(:labels) { { class: worker.class.to_s, queue: queue, foo: 'bar' } }
 
   after do
@@ -25,7 +26,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       SidekiqPrometheus.registry = registry
       allow(registry).to receive(:get).and_return(metric)
 
-      expect { |b| middleware.call(worker, nil, queue, &b) }.to yield_control
+      expect { |b| middleware.call(worker, job, queue, &b) }.to yield_control
 
       expect(registry).to have_received(:get).with(:sidekiq_job_count)
       expect(registry).to have_received(:get).with(:sidekiq_job_duration)
@@ -41,7 +42,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       allow(registry).to receive(:get).and_return(metric)
       expected = 'Zoot Boot'
 
-      result = middleware.call(worker, nil, queue) { expected }
+      result = middleware.call(worker, job, queue) { expected }
 
       expect(result).to eq(expected)
     end
@@ -50,7 +51,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       SidekiqPrometheus.registry = registry
       allow(registry).to receive(:get).and_return(metric)
 
-      expect { middleware.call(worker, nil, queue) { raise 'no way!' } }.to raise_error(StandardError)
+      expect { middleware.call(worker, job, queue) { raise 'no way!' } }.to raise_error(StandardError)
 
       expect(registry).to have_received(:get).with(:sidekiq_job_count)
       expect(registry).to have_received(:get).with(:sidekiq_job_failed)
@@ -59,6 +60,27 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
 
       expect(metric).to have_received(:increment).twice.with(labels: labels)
       expect(metric).not_to have_received(:observe)
+    end
+
+    context 'when worker class is ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper' do
+      let(:wrapped_class) { 'WrappedActiveJobClass' }
+      let(:job) { { 'wrapped' => wrapped_class } }
+      let(:labels) { { class: wrapped_class, queue: queue, foo: 'bar' } }
+
+      it 'sets the metric class attribute to the wrapped class' do
+        SidekiqPrometheus.registry = registry
+        allow(registry).to receive(:get).and_return(metric)
+
+        expect { |b| middleware.call(worker, job, queue, &b) }.to yield_control
+
+        expect(registry).to have_received(:get).with(:sidekiq_job_count)
+        expect(registry).to have_received(:get).with(:sidekiq_job_duration)
+        expect(registry).to have_received(:get).with(:sidekiq_job_success)
+        expect(registry).to have_received(:get).with(:sidekiq_job_allocated_objects)
+
+        expect(metric).to have_received(:increment).twice.with(labels: labels)
+        expect(metric).to have_received(:observe).twice.with(kind_of(Numeric), labels: labels)
+      end
     end
   end
 end
