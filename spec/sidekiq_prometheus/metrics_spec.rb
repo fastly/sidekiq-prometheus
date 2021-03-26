@@ -28,7 +28,7 @@ RSpec.describe SidekiqPrometheus::Metrics do
         docstring: 'this is a metric',
       }
 
-      described_class.register(metric)
+      described_class.register(**metric)
 
       expected = described_class.get(:metric)
       expect(expected).not_to be nil
@@ -41,7 +41,7 @@ RSpec.describe SidekiqPrometheus::Metrics do
         name: :metric,
         docstring: 'this is a metric',
       }
-      expect { described_class.register(metric) }.to raise_error(SidekiqPrometheus::Metrics::InvalidMetricType)
+      expect { described_class.register(**metric) }.to raise_error(SidekiqPrometheus::Metrics::InvalidMetricType)
     end
 
     context 'with preset_labels' do
@@ -53,7 +53,7 @@ RSpec.describe SidekiqPrometheus::Metrics do
           labels: %i[label1 label2],
         }
 
-        @registered_metric = described_class.register(metric)
+        @registered_metric = described_class.register(**metric)
       end
 
       after { SidekiqPrometheus.preset_labels = {} }
