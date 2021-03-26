@@ -257,6 +257,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 * NHM Tanveer Hossain Khan ([@we4tech](https://github.com/we4tech))
 * [@Postmodern](https://github.com/postmodern)
 * Ross Jones ([@rossjones](https://github.com/rossjones))
+* Alejandro Arrufat ([@mirubiri](https://github.com/mirubiri))
 
 ## Contributing
 
