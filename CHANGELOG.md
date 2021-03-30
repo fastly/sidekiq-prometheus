@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v1.4.0"></a>
+## [v1.4.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.3.0...v1.4.0) (2021-03-30)
+
+### Pull Requests
+
+* Merge pull request [#21](https://github.com/fastly/sidekiq-prometheus/issues/21) from Kevinrob/patch-1
+
+
 <a name="v1.3.0"></a>
 ## [v1.3.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.2.0...v1.3.0) (2021-03-26)
 
