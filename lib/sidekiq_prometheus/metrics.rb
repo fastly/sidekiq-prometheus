@@ -107,7 +107,7 @@ module SidekiqPrometheus::Metrics
   end
 
   def register_sidekiq_gc_metric
-    register SIDEKIQ_GC_METRIC
+    register(**SIDEKIQ_GC_METRIC)
   end
 
   def register_sidekiq_worker_gc_metrics
@@ -120,7 +120,7 @@ module SidekiqPrometheus::Metrics
 
   def register_metrics(metrics)
     metrics.each do |metric|
-      register(metric)
+      register(**metric)
     end
   end
 
@@ -159,7 +159,7 @@ module SidekiqPrometheus::Metrics
 
     options[:buckets] = buckets if buckets
 
-    registry.send(type, name.to_sym, options)
+    registry.send(type, name.to_sym, **options)
   end
 
   def unregister(name:)

@@ -6,6 +6,7 @@ require 'prometheus/client'
 require 'prometheus/middleware/exporter'
 require 'sidekiq'
 require 'sidekiq/api'
+require 'webrick'
 
 begin
   require 'sidekiq/ent'
