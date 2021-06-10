@@ -64,7 +64,7 @@ module SidekiqPrometheus::Metrics
     { name:      :sidekiq_job_failed,
       type:      :counter,
       docstring: 'Count of failed Sidekiq jobs',
-      labels:    JOB_LABELS, },
+      labels:    JOB_LABELS + [:error_class], },
     { name:      :sidekiq_job_success,
       type:      :counter,
       docstring: 'Count of successful Sidekiq jobs',

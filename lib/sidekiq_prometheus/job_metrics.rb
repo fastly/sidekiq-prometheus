@@ -30,7 +30,8 @@ class SidekiqPrometheus::JobMetrics
 
       result
     rescue StandardError => e
-      registry[:sidekiq_job_failed].increment(labels: labels)
+      err_label = { :error_class => e.class.to_s }
+      registry[:sidekiq_job_failed].increment(labels: err_label.merge(labels))
       raise e
     ensure
       registry[:sidekiq_job_count].increment(labels: labels)

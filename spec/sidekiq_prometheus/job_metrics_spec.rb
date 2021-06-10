@@ -16,6 +16,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
   let(:queue) { 'bbq' }
   let(:job) { {} }
   let(:labels) { { class: worker.class.to_s, queue: queue, foo: 'bar' } }
+  let(:failed_labels) { labels.merge(error_class: RuntimeError.to_s) }
 
   after do
     SidekiqPrometheus.registry = SidekiqPrometheus.client.registry
@@ -58,7 +59,8 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
       expect(registry).not_to have_received(:get).with(:sidekiq_job_duration)
       expect(registry).not_to have_received(:get).with(:sidekiq_job_success)
 
-      expect(metric).to have_received(:increment).twice.with(labels: labels)
+      expect(metric).to have_received(:increment).once.with(labels: failed_labels)
+      expect(metric).to have_received(:increment).once.with(labels: labels)
       expect(metric).not_to have_received(:observe)
     end
 
