@@ -140,7 +140,6 @@ module SidekiqPrometheus
     metrics_server_logger_enabled
   end
 
-
   ##
   # Get a metric from the registry
   # @param metric [Symbol] name of metric to fetch
@@ -218,10 +217,8 @@ module SidekiqPrometheus
     }
 
     unless metrics_server_logger_enabled?
-      opts.merge!(
-        Logger: WEBrick::Log.new("/dev/null"),
-        AccessLog: []
-      )
+      opts[:Logger] = WEBrick::Log.new('/dev/null')
+      opts[:AccessLog] = []
     end
 
     @_metrics_server ||= Thread.new do
