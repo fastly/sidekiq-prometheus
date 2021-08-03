@@ -1,5 +1,16 @@
 CHANGELOG
 
+<a name="v1.6.0"></a>
+## [v1.6.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.5.0...v1.6.0) (2021-08-03)
+
+### Features
+
+* add option for silencing the WEBrick access logging of /metrics
+
+### Pull Requests
+
+* Merge pull request [#25](https://github.com/fastly/sidekiq-prometheus/issues/25) from fastly/option_for_silencing_webrick
+
 
 <a name="v1.5.0"></a>
 ## [v1.5.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.4.0...v1.5.0) (2021-08-02)
