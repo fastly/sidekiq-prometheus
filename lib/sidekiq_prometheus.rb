@@ -57,6 +57,9 @@ module SidekiqPrometheus
     # @return [Integer] Port on which the metrics server will listen. Default: 9357
     attr_accessor :metrics_port
 
+    # @return [Boolean] When set to false will silence the metric server access logs. Default: true
+    attr_accessor :metrics_server_logger_enabled
+
     # Override the default Prometheus::Client
     # @return [Prometheus::Client]
     attr_writer :client
@@ -76,6 +79,7 @@ module SidekiqPrometheus
   self.metrics_server_enabled = true
   self.metrics_host = 'localhost'
   self.metrics_port = 9359
+  self.metrics_server_logger_enabled = true
   self.custom_labels = {}
   self.custom_metrics = []
 
@@ -127,6 +131,13 @@ module SidekiqPrometheus
   # @return [Boolean] defaults to true
   def metrics_server_enabled?
     metrics_server_enabled
+  end
+
+  ##
+  # Helper method for +metrics_server_logger_enabled+ configuration setting
+  # @return [Boolean] defaults to true
+  def metrics_server_logger_enabled?
+    metrics_server_logger_enabled
   end
 
   ##
@@ -200,14 +211,23 @@ module SidekiqPrometheus
   # Will listen on SidekiqPrometheus.metrics_host and
   # SidekiqPrometheus.metrics_port
   def metrics_server
+    opts = {
+      Port: SidekiqPrometheus.metrics_port,
+      Host: SidekiqPrometheus.metrics_host,
+    }
+
+    unless metrics_server_logger_enabled?
+      opts[:Logger] = WEBrick::Log.new('/dev/null')
+      opts[:AccessLog] = []
+    end
+
     @_metrics_server ||= Thread.new do
       Rack::Handler::WEBrick.run(
         Rack::Builder.new {
           use Prometheus::Middleware::Exporter, registry: SidekiqPrometheus.registry
           run ->(_) { [301, { 'Location' => '/metrics' }, []] }
         },
-        Port: SidekiqPrometheus.metrics_port,
-        Host: SidekiqPrometheus.metrics_host,
+        **opts
       )
     end
   end
