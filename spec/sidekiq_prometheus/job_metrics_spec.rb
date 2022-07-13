@@ -9,6 +9,13 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
     end
   end
 
+  module Sidekiq
+    module Limiter
+      class OverLimit < StandardError
+      end
+    end
+  end
+
   let(:middleware) { described_class.new }
   let(:registry) { instance_double Prometheus::Client::Registry }
   let(:metric) { double 'Metric', increment: true, observe: true }
@@ -61,6 +68,22 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
 
       expect(metric).to have_received(:increment).once.with(labels: failed_labels)
       expect(metric).to have_received(:increment).once.with(labels: labels)
+      expect(metric).not_to have_received(:observe)
+    end
+
+    it 'handles sidekiq ent Sidekiq::Limiter::OverLimit errors independently of failures' do
+      SidekiqPrometheus.registry = registry
+      allow(registry).to receive(:get).and_return(metric)
+
+      expect { middleware.call(worker, job, queue) { raise Sidekiq::Limiter::OverLimit } }.to raise_error(Sidekiq::Limiter::OverLimit)
+
+      expect(registry).to have_received(:get).with(:sidekiq_job_count)
+      expect(registry).to have_received(:get).with(:sidekiq_job_over_limit)
+      expect(registry).not_to have_received(:get).with(:sidekiq_job_failed)
+      expect(registry).not_to have_received(:get).with(:sidekiq_job_duration)
+      expect(registry).not_to have_received(:get).with(:sidekiq_job_success)
+
+      expect(metric).to have_received(:increment).twice.with(labels: labels)
       expect(metric).not_to have_received(:observe)
     end
 

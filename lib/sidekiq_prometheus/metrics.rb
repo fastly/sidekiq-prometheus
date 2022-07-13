@@ -69,6 +69,10 @@ module SidekiqPrometheus::Metrics
       type:      :counter,
       docstring: 'Count of successful Sidekiq jobs',
       labels:    JOB_LABELS, },
+    { name:      :sidekiq_job_over_limit,
+      type:      :counter,
+      docstring: 'Count of over limit Sidekiq jobs',
+      labels:    JOB_LABELS, },
   ].freeze
   SIDEKIQ_GC_METRIC = {
     name:      :sidekiq_job_allocated_objects,
