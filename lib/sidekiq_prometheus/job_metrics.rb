@@ -30,7 +30,7 @@ class SidekiqPrometheus::JobMetrics
 
       result
     rescue StandardError => e
-      if e.class.to_s == "Sidekiq::Limiter::OverLimit"
+      if e.class.to_s == 'Sidekiq::Limiter::OverLimit'
         registry[:sidekiq_job_over_limit].increment(labels: labels)
       else
         err_label = { :error_class => e.class.to_s }
