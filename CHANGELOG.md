@@ -1,5 +1,21 @@
 CHANGELOG
 
+<a name="v1.7.0"></a>
+## [v1.7.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.6.0...v1.7.0) (2022-09-29)
+
+### Bug Fixes
+
+* s/metrics_server_logging_enabled/metrics_server_logger_enabled/
+
+### Features
+
+* add Sidekiq::Stats processes_size to the periodic metrics
+
+### Pull Requests
+
+* Merge pull request [#30](https://github.com/fastly/sidekiq-prometheus/issues/30) from fastly/add_processes_size
+
+
 <a name="v1.6.0"></a>
 ## [v1.6.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.5.0...v1.6.0) (2021-08-03)
 
@@ -46,8 +62,9 @@ CHANGELOG
 
 ### Pull Requests
 
-* Merge pull request [#17](https://github.com/fastly/sidekiq-prometheus/issues/17) from jetpks/add-option-to-disable-metrics-server
+* Merge pull request [#18](https://github.com/fastly/sidekiq-prometheus/issues/18) from jetpks/release-120
 * Merge pull request [#15](https://github.com/fastly/sidekiq-prometheus/issues/15) from silicakes/master
+* Merge pull request [#17](https://github.com/fastly/sidekiq-prometheus/issues/17) from jetpks/add-option-to-disable-metrics-server
 
 <a name="v1.1.0"></a>
 ## [v1.1.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.0.1...v1.1.0) (2020-02-12)
@@ -63,12 +80,24 @@ CHANGELOG
 * Merge pull request [#11](https://github.com/fastly/sidekiq-prometheus/issues/11) from rossjones/patch-1
 * Merge pull request [#12](https://github.com/fastly/sidekiq-prometheus/issues/12) from fastly/hr
 
+<a name="v1.0.1"></a>
+## [v1.0.1](https://github.com/fastly/sidekiq-prometheus/compare/v0.9.2...v1.0.1) (2019-10-30)
+
+### Pull Requests
+
+* Merge pull request [#9](https://github.com/fastly/sidekiq-prometheus/issues/9) from we4tech/features/update-prometheus-client
+
+
 <a name="v1.0.0"></a>
 ## [v1.0.0](https://github.com/fastly/sidekiq-prometheus/compare/v0.9.1...v1.0.0) (2019-10-24)
 
 ### Pull Requests
 
 * Merge pull request [#9](https://github.com/fastly/sidekiq-prometheus/issues/9) from we4tech/features/update-prometheus-client
+
+
+<a name="v0.9.2"></a>
+## [v0.9.2](https://github.com/fastly/sidekiq-prometheus/compare/v1.0.0...v0.9.2) (2019-10-30)
 
 
 <a name="v0.9.1"></a>
