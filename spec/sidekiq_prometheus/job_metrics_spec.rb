@@ -9,7 +9,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
     end
   end
 
-class Sidekiq::Limiter::OverLimit < StandardError; end
+  class Sidekiq::Limiter::OverLimit < StandardError; end
 
   let(:middleware) { described_class.new }
   let(:registry) { instance_double Prometheus::Client::Registry }
