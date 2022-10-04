@@ -75,8 +75,8 @@ end
 
 #### Configuration options
 
-* `preset_labels`: Hash of labels that will be included with every metric when they are registered.
-* `custom_labels`: Array of names for each label that will be passed during the reporting. 
+* `preset_labels`: Hash of labels that will be included with every metric when they are registered. `Hash{Symbol (label name) => String (label value)}`
+* `custom_labels`: Hash of metrics and labels that can be applied to specific metrics. The metric name must be a registered metric. `Hash{Symbol (metric name) => Array<Symbol> (label names)}`
 * `gc_metrics_enabled`: Boolean that determines whether to record object allocation metrics per job. The default is `true`. Setting this to `false` if you don't need this metric.
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
 * `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defaults to `true`.
@@ -91,7 +91,7 @@ end
 ```ruby
 SidekiqPrometheus.configure do |config|
   config.preset_labels                 = { service: 'myapp' }
-  config.custom_labels                 = [:worker_class, :job_type, :any_other_label]
+  config.custom_labels                 = { sidekiq_job_count: [:worker_class, :job_type, :any_other_label] }
   config.gc_metrics_enabled            = false
   config.global_metrics_enabled        = true
   config.periodic_metrics_enabled      = true
