@@ -1,5 +1,17 @@
 CHANGELOG
 
+<a name="v1.8.0"></a>
+## [v1.8.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.7.0...v1.8.0) (2022-10-04)
+
+### Features
+
+* handle rate limiting exceptions distinctly from other exceptions ([#28](https://github.com/fastly/sidekiq-prometheus/issues/28))
+
+### Pull Requests
+
+* Merge pull request [#27](https://github.com/fastly/sidekiq-prometheus/issues/27) from pinkahd/patch-1
+
+
 <a name="v1.7.0"></a>
 ## [v1.7.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.6.0...v1.7.0) (2022-09-29)
 
