@@ -1,5 +1,12 @@
 CHANGELOG
 
+<a name="v1.8.1"></a>
+## [v1.8.1](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.0...v1.8.1) (2022-10-18)
+
+### Feature
+
+* Support newer Sidekiq-Enterprise (#[31](https://github.com/fastly/sidekiq-prometheus/pull/31))
+
 <a name="v1.8.0"></a>
 ## [v1.8.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.7.0...v1.8.0) (2022-10-04)
 
