@@ -44,7 +44,11 @@ class SidekiqPrometheus::PeriodicMetrics
     @sidekiq_queue = sidekiq_queue
     @senate = if senate.nil?
                 if Object.const_defined?('Sidekiq::Senate')
-                  Sidekiq::Senate
+                  if Sidekiq::Senate.respond_to?(:leader?)
+                    Sidekiq::Senate
+                  else
+                    Sidekiq::Senate.new(Sidekiq)
+                  end
                 else
                   Senate
                 end
