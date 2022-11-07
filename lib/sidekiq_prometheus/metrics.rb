@@ -11,6 +11,9 @@ module SidekiqPrometheus::Metrics
     { name:      :sidekiq_workers_size,
       type:      :gauge,
       docstring: 'Total number of workers processing jobs', },
+    { name:      :sidekiq_processes_size,
+      type:      :gauge,
+      docstring: 'Total number of running sidekiq processes', },
     { name:      :sidekiq_dead_size,
       type:      :gauge,
       docstring: 'Total Dead Size', },
@@ -68,6 +71,10 @@ module SidekiqPrometheus::Metrics
     { name:      :sidekiq_job_success,
       type:      :counter,
       docstring: 'Count of successful Sidekiq jobs',
+      labels:    JOB_LABELS, },
+    { name:      :sidekiq_job_over_limit,
+      type:      :counter,
+      docstring: 'Count of over limit Sidekiq jobs',
       labels:    JOB_LABELS, },
   ].freeze
   SIDEKIQ_GC_METRIC = {

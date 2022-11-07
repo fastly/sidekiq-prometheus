@@ -18,7 +18,7 @@ class SidekiqPrometheus::PeriodicMetrics
   attr_reader :interval
   attr_reader :senate, :sidekiq_stats, :sidekiq_queue
 
-  GLOBAL_STATS = %i[failed processed retry_size dead_size scheduled_size workers_size].freeze
+  GLOBAL_STATS = %i[failed processed retry_size dead_size scheduled_size workers_size processes_size].freeze
   GC_STATS = {
     counters: %i[major_gc_count minor_gc_count total_allocated_objects],
     gauges: %i[heap_live_slots heap_free_slots],
