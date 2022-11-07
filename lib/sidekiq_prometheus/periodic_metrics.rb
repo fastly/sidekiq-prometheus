@@ -10,10 +10,13 @@
 # @see https://github.com/mperham/sidekiq/wiki/Ent-Leader-Election
 # @see https://github.com/mperham/sidekiq/blob/main/lib/sidekiq/api.rb
 
-require 'sidekiq/component'
+begin
+  require 'sidekiq/component'
+rescue LoadError
+end
 
 class SidekiqPrometheus::PeriodicMetrics
-  include Sidekiq::Component
+  include Sidekiq::Component if defined? Sidekiq::Component
 
   # @return [Boolean] When +true+ will stop the reporting loop.
   attr_accessor :done
