@@ -11,6 +11,8 @@
 # @see https://github.com/mperham/sidekiq/blob/main/lib/sidekiq/api.rb
 
 class SidekiqPrometheus::PeriodicMetrics
+  include Sidekiq::Component
+
   # @return [Boolean] When +true+ will stop the reporting loop.
   attr_accessor :done
 
@@ -28,26 +30,26 @@ class SidekiqPrometheus::PeriodicMetrics
   ##
   # Instance of SidekiqPrometheus::PeriodicMetrics
   # @return [SidekiqPrometheus:PeriodicMetrics]
-  def self.reporter
-    @reporter ||= new
+  def self.reporter(config)
+    @reporter ||= new(config: config)
   end
 
   ##
   # @param interval [Integer] Interval in seconds to record metrics.
   # @param sidekiq_stats [Sidekiq::Stats]
   # @param senate [#leader?] Sidekiq::Senate
-  def initialize(interval: SidekiqPrometheus.periodic_reporting_interval, sidekiq_stats: Sidekiq::Stats, sidekiq_queue: Sidekiq::Queue, senate: nil)
+  def initialize(interval: SidekiqPrometheus.periodic_reporting_interval, sidekiq_stats: Sidekiq::Stats, sidekiq_queue: Sidekiq::Queue, senate: nil, config: nil)
     self.done = false
     @interval = interval
-
+    @config = config
     @sidekiq_stats = sidekiq_stats
     @sidekiq_queue = sidekiq_queue
     @senate = if senate.nil?
                 if Object.const_defined?('Sidekiq::Senate')
-                  if Sidekiq::Senate.respond_to?(:leader?)
-                    Sidekiq::Senate
+                  if respond_to?(:leader?)
+                    self
                   else
-                    Sidekiq::Senate.new(Sidekiq)
+                    Sidekiq::Senate
                   end
                 else
                   Senate
