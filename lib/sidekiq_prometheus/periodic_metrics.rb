@@ -10,6 +10,8 @@
 # @see https://github.com/mperham/sidekiq/wiki/Ent-Leader-Election
 # @see https://github.com/mperham/sidekiq/blob/main/lib/sidekiq/api.rb
 
+require 'sidekiq/component'
+
 class SidekiqPrometheus::PeriodicMetrics
   include Sidekiq::Component
 
