@@ -1,5 +1,17 @@
 CHANGELOG
 
+<a name="v1.8.2"></a>
+## [v1.8.2](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.1...v1.8.2) (2022-11-29)
+
+## What's Changed
+* Allow sidekiq-prometheus to work with prometheus-client version > 2 by @hieuk09 in https://github.com/fastly/sidekiq-prometheus/pull/29
+* Fixes Newer Sidekiq-Enterprise versions that have a Senate.leader? issue with Sidekiq Prometheus 1.8.1 by @imightbeinatree in https://github.com/fastly/sidekiq-prometheus/pull/32
+
+## New Contributors
+* @hieuk09 made their first contribution in https://github.com/fastly/sidekiq-prometheus/pull/29
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v1.8.1...v1.8.2
+
 <a name="v1.8.1"></a>
 ## [v1.8.1](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.0...v1.8.1) (2022-10-18)
 
