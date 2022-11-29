@@ -195,8 +195,8 @@ module SidekiqPrometheus
       end
 
       if periodic_metrics_enabled?
-        config.on(:startup)  { SidekiqPrometheus::PeriodicMetrics.reporter.start }
-        config.on(:shutdown) { SidekiqPrometheus::PeriodicMetrics.reporter.stop }
+        config.on(:startup)  { SidekiqPrometheus::PeriodicMetrics.reporter(config).start }
+        config.on(:shutdown) { SidekiqPrometheus::PeriodicMetrics.reporter(config).stop }
       end
 
       if metrics_server_enabled?
