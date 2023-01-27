@@ -21,6 +21,9 @@ class SidekiqPrometheus::PeriodicMetrics
   # @return [Boolean] When +true+ will stop the reporting loop.
   attr_accessor :done
 
+  # @return [Boolean] Indicates if this instance is currently the leader.
+  attr_accessor :leader
+
   # @return [Integer] Interval in seconds to record metrics. Default: [SidekiqPrometheus.periodic_reporting_interval]
   attr_reader :interval
   attr_reader :senate, :sidekiq_stats, :sidekiq_queue
@@ -62,6 +65,7 @@ class SidekiqPrometheus::PeriodicMetrics
     else
       senate
     end
+    @leader = false
   end
 
   ##
@@ -152,14 +156,34 @@ class SidekiqPrometheus::PeriodicMetrics
   def run
     until done
       begin
-        report_global_metrics if SidekiqPrometheus.global_metrics_enabled? && senate.leader?
-        report_redis_metrics if SidekiqPrometheus.global_metrics_enabled? && senate.leader?
+        if SidekiqPrometheus.global_metrics_enabled?
+          handle_leader_state(senate.leader?)
+          report_global_metrics if leader
+          report_redis_metrics if leader
+        end
+
         report_gc_metrics if SidekiqPrometheus.gc_metrics_enabled?
       rescue => e
         Sidekiq.logger.error e
       ensure
         sleep interval
       end
+    end
+  end
+
+  ##
+  # If this instance was promoted to the leader set the local state and register the metrics.
+  def handle_leader_state(senate_leader)
+    return if senate_leader == leader
+
+    if senate_leader && !leader
+      # This instance is now the leader
+      self.leader = true
+      SidekiqPrometheus::Metrics.register_sidekiq_global_metrics
+    else
+      # we've been demoted!
+      SidekiqPrometheus::Metrics.unregister_sidekiq_global_metrics
+      self.leader = false
     end
   end
 

@@ -101,4 +101,16 @@ RSpec.describe SidekiqPrometheus::Metrics do
       end
     end
   end
+
+  describe "unregister_sidekiq_global_metrics" do
+    it "unregisters global metrics" do
+      described_class.register_sidekiq_global_metrics
+
+      described_class.unregister_sidekiq_global_metrics
+
+      described_class::SIDEKIQ_GLOBAL_METRICS.each do |metric|
+        expect(described_class.get(metric[:name])).to be nil
+      end
+    end
+  end
 end

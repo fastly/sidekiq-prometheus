@@ -26,6 +26,11 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
       r = described_class.new(sidekiq_stats: stats_class)
       expect(r.done).to be false
     end
+
+    it "sets leader to false" do
+      r = described_class.new(sidekiq_stats: stats_class)
+      expect(r.leader).to be false
+    end
   end
 
   describe "#start" do
@@ -123,6 +128,58 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
       expect(metric).to have_received(:set).with(0, labels: {database: "db0"})
       expect(metric).to have_received(:set).with(100, labels: {database: "db1"})
       expect(metric).to have_received(:set).with(10, labels: {database: "db1"})
+    end
+  end
+
+  describe "#handle_leader_state" do
+    it "registers metrics and updates local state when the instance is elected leader" do
+      r = described_class.new(sidekiq_stats: stats_class)
+      expect(r.leader).to be false
+      allow(SidekiqPrometheus::Metrics).to receive(:register_sidekiq_global_metrics)
+
+      senate_leader = true
+      r.handle_leader_state(senate_leader)
+
+      expect(r.leader).to be true
+      expect(SidekiqPrometheus::Metrics).to have_received(:register_sidekiq_global_metrics)
+    end
+
+    it "unregisters metrics and updates local state when the instance is demoted" do
+      r = described_class.new(sidekiq_stats: stats_class)
+      r.leader = true
+      allow(SidekiqPrometheus::Metrics).to receive(:unregister_sidekiq_global_metrics)
+
+      senate_leader = false
+      r.handle_leader_state(senate_leader)
+
+      expect(r.leader).to be false
+      expect(SidekiqPrometheus::Metrics).to have_received(:unregister_sidekiq_global_metrics)
+    end
+
+    it "it does nothing if senate.leader? is true and the instance is already leader" do
+      r = described_class.new(sidekiq_stats: stats_class)
+      r.leader = true
+      allow(SidekiqPrometheus::Metrics).to receive(:register_sidekiq_global_metrics)
+      allow(SidekiqPrometheus::Metrics).to receive(:unregister_sidekiq_global_metrics)
+      expect(r.leader).to be true
+
+      senate_leader = true
+      r.handle_leader_state(senate_leader)
+
+      #expect(r.leader).to be true
+      expect(SidekiqPrometheus::Metrics).not_to have_received(:register_sidekiq_global_metrics)
+      expect(SidekiqPrometheus::Metrics).not_to have_received(:unregister_sidekiq_global_metrics)
+    end
+
+    it "does nothing if senate.leader? is false and the instance is not the leader" do
+      r = described_class.new(sidekiq_stats: stats_class)
+      allow(SidekiqPrometheus::Metrics).to receive(:unregister_sidekiq_global_metrics)
+
+      senate_leader = false
+      r.handle_leader_state(senate_leader)
+
+      expect(r.leader).to be false
+      expect(SidekiqPrometheus::Metrics).not_to have_received(:unregister_sidekiq_global_metrics)
     end
   end
 end
