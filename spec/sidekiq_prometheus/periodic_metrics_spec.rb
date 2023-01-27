@@ -166,7 +166,7 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
       senate_leader = true
       r.handle_leader_state(senate_leader)
 
-      #expect(r.leader).to be true
+      # expect(r.leader).to be true
       expect(SidekiqPrometheus::Metrics).not_to have_received(:register_sidekiq_global_metrics)
       expect(SidekiqPrometheus::Metrics).not_to have_received(:unregister_sidekiq_global_metrics)
     end
