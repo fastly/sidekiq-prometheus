@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'sidekiq_prometheus'
+require "bundler/setup"
+require "sidekiq_prometheus"
 
 Bundler.require(:test)
 
 RSpec.configure do |config|
-  config.example_status_persistence_file_path = '.rspec_status'
+  config.example_status_persistence_file_path = ".rspec_status"
   config.disable_monkey_patching!
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
@@ -25,4 +25,4 @@ def silence
   $stdout = original_stdout
 end
 
-Sidekiq.logger = Logger.new('/dev/null')
+Sidekiq.logger = Logger.new("/dev/null")

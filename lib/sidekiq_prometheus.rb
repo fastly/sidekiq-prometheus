@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'benchmark'
-require 'rack'
-require 'prometheus/client'
-require 'prometheus/middleware/exporter'
-require 'sidekiq'
-require 'sidekiq/api'
-require 'webrick'
+require "benchmark"
+require "rack"
+require "prometheus/client"
+require "prometheus/middleware/exporter"
+require "sidekiq"
+require "sidekiq/api"
+require "webrick"
 
 begin
-  require 'sidekiq/ent'
+  require "sidekiq/ent"
 rescue LoadError
 end
 
@@ -77,7 +77,7 @@ module SidekiqPrometheus
   self.global_metrics_enabled = true
   self.periodic_reporting_interval = 30
   self.metrics_server_enabled = true
-  self.metrics_host = 'localhost'
+  self.metrics_host = "localhost"
   self.metrics_port = 9359
   self.metrics_server_logger_enabled = true
   self.custom_labels = {}
@@ -115,7 +115,7 @@ module SidekiqPrometheus
   # Requires +Sidekiq::Enterprise+ as it uses the leader election functionality
   # @return [Boolean] defaults to true if +Sidekiq::Enterprise+ is available
   def global_metrics_enabled?
-    Object.const_defined?('Sidekiq::Enterprise') && global_metrics_enabled
+    Object.const_defined?("Sidekiq::Enterprise") && global_metrics_enabled
   end
 
   ##
@@ -149,8 +149,8 @@ module SidekiqPrometheus
   end
 
   class << self
-    alias configure! configure
-    alias get []
+    alias_method :configure!, :configure
+    alias_method :get, :[]
   end
 
   ##
@@ -166,7 +166,7 @@ module SidekiqPrometheus
   def register_custom_metrics
     return if custom_metrics.empty?
 
-    raise SidekiqPrometheus::Error, 'custom_metrics is not an array.' unless custom_metrics.is_a?(Array)
+    raise SidekiqPrometheus::Error, "custom_metrics is not an array." unless custom_metrics.is_a?(Array)
 
     SidekiqPrometheus::Metrics.register_metrics(custom_metrics)
   end
@@ -195,12 +195,12 @@ module SidekiqPrometheus
       end
 
       if periodic_metrics_enabled?
-        config.on(:startup)  { SidekiqPrometheus::PeriodicMetrics.reporter(config).start }
+        config.on(:startup) { SidekiqPrometheus::PeriodicMetrics.reporter(config).start }
         config.on(:shutdown) { SidekiqPrometheus::PeriodicMetrics.reporter(config).stop }
       end
 
       if metrics_server_enabled?
-        config.on(:startup)  { SidekiqPrometheus.metrics_server }
+        config.on(:startup) { SidekiqPrometheus.metrics_server }
         config.on(:shutdown) { SidekiqPrometheus.metrics_server.kill }
       end
     end
@@ -213,11 +213,11 @@ module SidekiqPrometheus
   def metrics_server
     opts = {
       Port: SidekiqPrometheus.metrics_port,
-      Host: SidekiqPrometheus.metrics_host,
+      Host: SidekiqPrometheus.metrics_host
     }
 
     unless metrics_server_logger_enabled?
-      opts[:Logger] = WEBrick::Log.new('/dev/null')
+      opts[:Logger] = WEBrick::Log.new("/dev/null")
       opts[:AccessLog] = []
     end
 
@@ -225,7 +225,7 @@ module SidekiqPrometheus
       Rack::Handler::WEBrick.run(
         Rack::Builder.new {
           use Prometheus::Middleware::Exporter, registry: SidekiqPrometheus.registry
-          run ->(_) { [301, { 'Location' => '/metrics' }, []] }
+          run ->(_) { [301, {"Location" => "/metrics"}, []] }
         },
         **opts
       )
@@ -235,7 +235,7 @@ end
 
 class SidekiqPrometheus::Error < StandardError; end
 
-require 'sidekiq_prometheus/job_metrics'
-require 'sidekiq_prometheus/metrics'
-require 'sidekiq_prometheus/periodic_metrics'
-require 'sidekiq_prometheus/version'
+require "sidekiq_prometheus/job_metrics"
+require "sidekiq_prometheus/metrics"
+require "sidekiq_prometheus/periodic_metrics"
+require "sidekiq_prometheus/version"

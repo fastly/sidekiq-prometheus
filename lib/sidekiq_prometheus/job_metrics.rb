@@ -7,8 +7,8 @@ class SidekiqPrometheus::JobMetrics
     # If we're using a wrapper class, like ActiveJob, use the "wrapped"
     # attribute to expose the underlying thing.
     labels = {
-      class: job['wrapped'] || worker.class.to_s,
-      queue: queue,
+      class: job["wrapped"] || worker.class.to_s,
+      queue: queue
     }
 
     begin
@@ -29,11 +29,11 @@ class SidekiqPrometheus::JobMetrics
       end
 
       result
-    rescue StandardError => e
-      if e.class.to_s == 'Sidekiq::Limiter::OverLimit'
+    rescue => e
+      if e.class.to_s == "Sidekiq::Limiter::OverLimit"
         registry[:sidekiq_job_over_limit].increment(labels: labels)
       else
-        err_label = { :error_class => e.class.to_s }
+        err_label = {error_class: e.class.to_s}
         registry[:sidekiq_job_failed].increment(labels: err_label.merge(labels))
       end
 

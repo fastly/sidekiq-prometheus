@@ -11,7 +11,7 @@
 # @see https://github.com/mperham/sidekiq/blob/main/lib/sidekiq/api.rb
 
 begin
-  require 'sidekiq/component'
+  require "sidekiq/component"
 rescue LoadError
 end
 
@@ -28,7 +28,7 @@ class SidekiqPrometheus::PeriodicMetrics
   GLOBAL_STATS = %i[failed processed retry_size dead_size scheduled_size workers_size processes_size].freeze
   GC_STATS = {
     counters: %i[major_gc_count minor_gc_count total_allocated_objects],
-    gauges: %i[heap_live_slots heap_free_slots],
+    gauges: %i[heap_live_slots heap_free_slots]
   }.freeze
   REDIS_STATS = %w[connected_clients used_memory used_memory_peak].freeze
 
@@ -50,24 +50,24 @@ class SidekiqPrometheus::PeriodicMetrics
     @sidekiq_stats = sidekiq_stats
     @sidekiq_queue = sidekiq_queue
     @senate = if senate.nil?
-                if Object.const_defined?('Sidekiq::Senate')
-                  if respond_to?(:leader?)
-                    self
-                  else
-                    Sidekiq::Senate
-                  end
-                else
-                  Senate
-                end
-              else
-                senate
-              end
+      if Object.const_defined?("Sidekiq::Senate")
+        if respond_to?(:leader?)
+          self
+        else
+          Sidekiq::Senate
+        end
+      else
+        Senate
+      end
+    else
+      senate
+    end
   end
 
   ##
   # Start the period mettric reporter
   def start
-    Sidekiq.logger.info('SidekiqPrometheus: Starting periodic metrics reporting')
+    Sidekiq.logger.info("SidekiqPrometheus: Starting periodic metrics reporting")
     @thread = Thread.new(&method(:run))
   end
 
@@ -100,8 +100,8 @@ class SidekiqPrometheus::PeriodicMetrics
     end
 
     sidekiq_queue.all.each do |queue|
-      SidekiqPrometheus[:sidekiq_enqueued]&.set(queue.size, labels: { queue: queue.name })
-      SidekiqPrometheus[:sidekiq_queue_latency]&.observe(queue.latency, labels: { queue: queue.name })
+      SidekiqPrometheus[:sidekiq_enqueued]&.set(queue.size, labels: {queue: queue.name})
+      SidekiqPrometheus[:sidekiq_queue_latency]&.observe(queue.latency, labels: {queue: queue.name})
     end
   end
 
@@ -122,7 +122,7 @@ class SidekiqPrometheus::PeriodicMetrics
 
     db_stats = redis_info.select { |k, _v| k.match(/^db/) }
     db_stats.each do |db, stat|
-      label = { database: db }
+      label = {database: db}
       values = stat.scan(/\d+/)
       SidekiqPrometheus[:sidekiq_redis_keys]&.set(values[0].to_i, labels: label)
       SidekiqPrometheus[:sidekiq_redis_expires]&.set(values[1].to_i, labels: label)
@@ -134,8 +134,16 @@ class SidekiqPrometheus::PeriodicMetrics
   # @see https://github.com/discourse/prometheus_exporter/blob/v0.3.3/lib/prometheus_exporter/instrumentation/process.rb#L39-L42
   def rss
     pid = Process.pid
-    @pagesize ||= `getconf PAGESIZE`.to_i rescue 4096
-    File.read("/proc/#{pid}/statm").split(' ')[1].to_i * @pagesize rescue 0
+    @pagesize ||= begin
+      `getconf PAGESIZE`.to_i
+    rescue
+      4096
+    end
+    begin
+      File.read("/proc/#{pid}/statm").split(" ")[1].to_i * @pagesize
+    rescue
+      0
+    end
   end
 
   ##
@@ -147,7 +155,7 @@ class SidekiqPrometheus::PeriodicMetrics
         report_global_metrics if SidekiqPrometheus.global_metrics_enabled? && senate.leader?
         report_redis_metrics if SidekiqPrometheus.global_metrics_enabled? && senate.leader?
         report_gc_metrics if SidekiqPrometheus.gc_metrics_enabled?
-      rescue StandardError => e
+      rescue => e
         Sidekiq.logger.error e
       ensure
         sleep interval
