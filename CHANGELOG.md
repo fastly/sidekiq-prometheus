@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v1.8.3"></a>
+## [v1.8.3](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.2...v1.8.3) (2023-01-30)
+
+## What's Changed
+* Track leader state so that can unregister when demoted by @leklund in https://github.com/fastly/sidekiq-prometheus/pull/36
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v1.8.2...v1.8.3
+
 <a name="v1.8.2"></a>
 ## [v1.8.2](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.1...v1.8.2) (2022-11-29)
 
