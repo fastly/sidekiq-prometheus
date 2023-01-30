@@ -178,7 +178,6 @@ module SidekiqPrometheus
     SidekiqPrometheus::Metrics.register_sidekiq_job_metrics
     SidekiqPrometheus::Metrics.register_sidekiq_gc_metric if gc_metrics_enabled?
     SidekiqPrometheus::Metrics.register_sidekiq_worker_gc_metrics if gc_metrics_enabled? && periodic_metrics_enabled?
-    SidekiqPrometheus::Metrics.register_sidekiq_global_metrics if global_metrics_enabled? && periodic_metrics_enabled?
     register_custom_metrics
 
     sidekiq_setup

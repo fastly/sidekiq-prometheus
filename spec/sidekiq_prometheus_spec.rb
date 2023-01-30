@@ -168,7 +168,7 @@ RSpec.describe SidekiqPrometheus do
         SidekiqPrometheus::Metrics.register_sidekiq_job_metrics
         thread = described_class.metrics_server
 
-        sleep 0.5
+        sleep 1
 
         http = Net::HTTP.new(SidekiqPrometheus.metrics_host, SidekiqPrometheus.metrics_port)
         res = http.request(Net::HTTP::Get.new("/metrics"))

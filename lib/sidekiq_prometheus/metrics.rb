@@ -131,6 +131,16 @@ module SidekiqPrometheus::Metrics
     end
   end
 
+  def unregister_sidekiq_global_metrics
+    unregister_metrics SIDEKIQ_GLOBAL_METRICS
+  end
+
+  def unregister_metrics(metrics)
+    metrics.each do |metric|
+      unregister(name: metric[:name])
+    end
+  end
+
   ##
   # Fetch a metric from the registry
   # @param name [Symbol] name of metric to fetch
