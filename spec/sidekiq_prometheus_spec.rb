@@ -132,9 +132,9 @@ RSpec.describe SidekiqPrometheus do
 
       described_class.setup
 
-      expect(Sidekiq.server_middleware.entries.last.klass).to eq(SidekiqPrometheus::JobMetrics)
+      expect(Sidekiq.default_configuration.server_middleware.entries.last.klass).to eq(SidekiqPrometheus::JobMetrics)
 
-      events = Sidekiq.options[:lifecycle_events]
+      events = Sidekiq.default_configuration[:lifecycle_events]
       expect(events[:startup].first).to be_kind_of(Proc)
       expect(events[:shutdown].first).to be_kind_of(Proc)
     end

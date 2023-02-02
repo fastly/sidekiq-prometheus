@@ -12,6 +12,7 @@
 
 begin
   require "sidekiq/component"
+  require "redis"
 rescue LoadError
 end
 
