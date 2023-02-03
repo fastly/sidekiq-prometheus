@@ -114,7 +114,7 @@ class SidekiqPrometheus::PeriodicMetrics
   # Records metrics from Redis
   def report_redis_metrics
     redis_info = begin
-      Sidekiq.redis_info
+      Sidekiq.default_configuration.redis_info
     rescue Redis::BaseConnectionError
       nil
     end
