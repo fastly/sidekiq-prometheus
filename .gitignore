@@ -8,4 +8,5 @@
 /tmp/
 .rspec_status
 Gemfile.lock
+*gemfile.lock
 /.idea/
