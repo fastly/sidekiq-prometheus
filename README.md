@@ -130,10 +130,13 @@ All Sidekiq job metrics are reported with these labels:
 | sidekiq_job_success | counter | Count of successful Sidekiq jobs |
 | sidekiq_job_allocated_objects | histogram | Count of ruby objects allocated by a Sidekiq job |
 | sidekiq_job_failed | counter | Count of failed Sidekiq jobs |
+| sidekiq_job_over_limit | counter | Count of over limit Sidekiq jobs |
+
 
 Notes:
 
 * when a job fails only `sidekiq_job_count` and `sidekiq_job_failed` will be reported.
+* when a job fails due to Sidekiq::Limiter::OverLimit error, only `sidekiq_job_count` and `sidekiq_job_over_limit` will be reported.
 * `sidekiq_job_allocated_objects` will only be reported if `SidekiqPrometheus.gc_metrics_enabled? == true`
 
 ### Periodic GC Metrics
