@@ -85,7 +85,7 @@ RSpec.describe SidekiqPrometheus::Metrics do
 
       it "initializes the given label sets" do
         SidekiqPrometheus.init_label_sets = {
-          a_metric: [{ label1: "value1", label2: "value1"}, { label1: "value1", label2: "value2"}]
+          a_metric: [{label1: "value1", label2: "value1"}, {label1: "value1", label2: "value2"}]
         }
 
         expect(subject.values).to be == {
@@ -102,7 +102,7 @@ RSpec.describe SidekiqPrometheus::Metrics do
 
       it "raises InvalidLabelSetError error if any required label is missing" do
         SidekiqPrometheus.init_label_sets = {
-          a_metric: [{ label1: "value1" }]
+          a_metric: [{label1: "value1"}]
         }
 
         expect { subject }.to raise_error(Prometheus::Client::LabelSetValidator::InvalidLabelSetError)
