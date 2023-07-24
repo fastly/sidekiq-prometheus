@@ -72,6 +72,42 @@ RSpec.describe SidekiqPrometheus::Metrics do
         subject.increment(labels: {label1: "label1", label2: "label2"})
       end
     end
+
+    context "with init_label_sets config" do
+      let(:metric) {
+        {
+          type: :counter, name: :a_metric, docstring: "something better",
+          labels: %i[label1 label2]
+        }
+      }
+
+      subject { described_class.register(**metric) }
+
+      it "initializes the given label sets" do
+        SidekiqPrometheus.init_label_sets = {
+          a_metric: [{ label1: "value1", label2: "value1"}, { label1: "value1", label2: "value2"}]
+        }
+
+        expect(subject.values).to be == {
+          {label1: "value1", label2: "value1"} => 0.0,
+          {label1: "value1", label2: "value2"} => 0.0
+        }
+      end
+
+      it "skips initialization when label sets are not provided" do
+        SidekiqPrometheus.init_label_sets = {}
+
+        expect(subject.values).to be == {}
+      end
+
+      it "raises InvalidLabelSetError error if any required label is missing" do
+        SidekiqPrometheus.init_label_sets = {
+          a_metric: [{ label1: "value1" }]
+        }
+
+        expect { subject }.to raise_error(Prometheus::Client::LabelSetValidator::InvalidLabelSetError)
+      end
+    end
   end
 
   describe "register_sidekiq_job_metrics" do

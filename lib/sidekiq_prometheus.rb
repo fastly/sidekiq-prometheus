@@ -42,6 +42,14 @@ module SidekiqPrometheus
     # @return [Boolean] Setting to control enabling/disabling global metrics. Default: true
     attr_accessor :global_metrics_enabled
 
+    # @return [Hash{Symbol => Array}] Label sets that will be initiliazed when a metric is registered.
+    # @example
+    # {
+    #   metric_name: [{label: 'value1', other_label: 'value1'}, {label: 'value1', other_label: 'value2'}],
+    #   another_metric_name: [{label: 'value1', other_label: 'value1'}]
+    # }
+    attr_accessor :init_label_sets
+
     # @return [Boolean] Setting to control enabling/disabling periodic metrics. Default: true
     attr_accessor :periodic_metrics_enabled
 
@@ -82,6 +90,7 @@ module SidekiqPrometheus
   self.metrics_server_logger_enabled = true
   self.custom_labels = {}
   self.custom_metrics = []
+  self.init_label_sets = {}
 
   module_function
 
