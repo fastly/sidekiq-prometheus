@@ -42,7 +42,7 @@ module SidekiqPrometheus
     # @return [Boolean] Setting to control enabling/disabling global metrics. Default: true
     attr_accessor :global_metrics_enabled
 
-    # @return [Hash{Symbol => Array}] Label sets that will be initiliazed when a metric is registered.
+    # @return [Hash{Symbol => Array(Hash)}] Label sets that will be initiliazed when a metric is registered.
     # @example
     # {
     #   metric_name: [{label: 'value1', other_label: 'value1'}, {label: 'value1', other_label: 'value2'}],

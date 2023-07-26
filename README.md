@@ -79,6 +79,7 @@ end
 * `custom_labels`: Hash of metrics and labels that can be applied to specific metrics. The metric name must be a registered metric. `Hash{Symbol (metric name) => Array<Symbol> (label names)}`
 * `gc_metrics_enabled`: Boolean that determines whether to record object allocation metrics per job. The default is `true`. Setting this to `false` if you don't need this metric.
 * `global_metrics_enabled`: Boolean that determines whether to report global metrics from the PeriodicMetrics reporter. When `true` this will report on a number of stats from the Sidekiq API for the cluster. This requires Sidekiq::Enterprise as the reporter uses the leader election functionality to ensure that only one worker per cluster is reporting metrics.
+* `init_label_sets`: Hash of metrics and label sets that are initialized by calling `metric.init_label_set` after the metric is registered. `Hash{Symbol (metric name) => Array<Hash> (label sets)}`.
 * `periodic_metrics_enabled`: Boolean that determines whether to run the periodic metrics reporter. `PeriodicMetrics` runs a separate thread that reports on global metrics (if enabled) as well worker GC stats (if enabled). It reports metrics on the interval defined by `periodic_reporting_interval`. Defaults to `true`.
 * `periodic_reporting_interval`: interval in seconds for reporting periodic metrics. Default: `30`
 * `metrics_server_enabled`: Boolean that determines whether to run the rack server. Defaults to `true`
@@ -94,6 +95,7 @@ SidekiqPrometheus.configure do |config|
   config.custom_labels                 = { sidekiq_job_count: [:worker_class, :job_type, :any_other_label] }
   config.gc_metrics_enabled            = false
   config.global_metrics_enabled        = true
+  config.init_label_sets               = { sidekiq_job_count: [{worker_class: "class", job_type: "single", any_other_label: "value"}, {worker_class: "class", job_type: "batch", any_other_label: "other-value"}] }
   config.periodic_metrics_enabled      = true
   config.periodic_reporting_interval   = 20
   config.metrics_server_enabled        = true
@@ -101,7 +103,7 @@ SidekiqPrometheus.configure do |config|
 end
 ```
 
-Custom labels may be added by defining the `prometheus_labels` method in the worker class, 
+Custom labels may be added by defining the `prometheus_labels` method in the worker class,
 prior you need to register the custom labels as of the above example:
 
 ```ruby
@@ -217,7 +219,7 @@ There is also a method to register more than one metric at a time:
 customer_worker_metrics = [
   {
     name: :file_count, type: :counter, docstring: 'Number of active files',
-    name: :file_size,  type: :gauge,   docstring: 'Size of files in bytes',    
+    name: :file_size,  type: :gauge,   docstring: 'Size of files in bytes',
   }
 ]
 
