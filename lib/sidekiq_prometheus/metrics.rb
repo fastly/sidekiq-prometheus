@@ -176,7 +176,12 @@ module SidekiqPrometheus::Metrics
 
     options[:buckets] = buckets if buckets
 
-    registry.send(type, name.to_sym, **options)
+    metric = registry.send(type, name.to_sym, **options)
+
+    init_label_sets = SidekiqPrometheus.init_label_sets.fetch(name, [])
+    init_label_sets.each { |label_set| metric.init_label_set(label_set) }
+
+    metric
   end
 
   def unregister(name:)
