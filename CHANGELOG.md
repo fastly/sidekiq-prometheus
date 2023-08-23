@@ -1,5 +1,13 @@
 CHANGELOG
 
+<a name="v2.0.0"></a>
+## [v2.0.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.9.0...v2.0.0) (2023-08-23)
+
+## What's Changed
+* Sidekiq 7 support by @leklund in https://github.com/fastly/sidekiq-prometheus/pull/37
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v1.9.0...v2.0.0
+
 <a name="v1.9.0"></a>
 ## [v1.9.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.3...v1.9.0) (2023-08-23)
 
