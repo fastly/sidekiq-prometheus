@@ -25,4 +25,6 @@ def silence
   $stdout = original_stdout
 end
 
-Sidekiq.logger = Logger.new("/dev/null")
+Sidekiq.configure_server do |cfg|
+  cfg.logger = Logger.new("/dev/null")
+end

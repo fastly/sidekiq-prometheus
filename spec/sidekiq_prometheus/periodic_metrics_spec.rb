@@ -107,8 +107,12 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
         "db1" => "keys=100,expires=10,avg_ttl=1000"
       }
     end
+    let(:default_config) { double "Sidekiq::Config", redis_info: fake_info }
 
     it "returns nil if there is no connection to redis" do
+      err_config = double "Sidekiq::Config"
+      allow(err_config).to receive(:redis_info).and_raise(Redis::BaseConnectionError)
+      allow(Sidekiq).to receive(:default_configuration).and_return(err_config)
       allow(Sidekiq).to receive(:redis_info).and_raise(Redis::BaseConnectionError)
 
       expect(reporter.report_redis_metrics).to be nil
@@ -117,6 +121,7 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
     it "records redis metrics" do
       SidekiqPrometheus.registry = registry
       allow(registry).to receive(:get).and_return(metric)
+      allow(Sidekiq).to receive(:default_configuration).and_return(default_config)
       allow(Sidekiq).to receive(:redis_info).and_return(fake_info)
 
       reporter.report_redis_metrics

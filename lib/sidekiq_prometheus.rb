@@ -239,6 +239,10 @@ module SidekiqPrometheus
       )
     end
   end
+
+  def sidekiq_seven?
+    @sk7 ||= Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new("7.0")
+  end
 end
 
 class SidekiqPrometheus::Error < StandardError; end

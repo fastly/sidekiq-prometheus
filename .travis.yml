@@ -5,3 +5,6 @@ rvm:
   - 3.0
   - 2.7
 before_install: gem install bundler -v 2.2.15
+gemfile:
+  - sidekiq_6.gemfile
+  - sidekiq_7.gemfile

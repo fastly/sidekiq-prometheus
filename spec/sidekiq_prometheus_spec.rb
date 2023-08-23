@@ -131,10 +131,14 @@ RSpec.describe SidekiqPrometheus do
       described_class.periodic_metrics_enabled = true
 
       described_class.setup
+      if SidekiqPrometheus.sidekiq_seven?
+        expect(Sidekiq.default_configuration.server_middleware.entries.last.klass).to eq(SidekiqPrometheus::JobMetrics)
+        events = Sidekiq.default_configuration[:lifecycle_events]
+      else
+        expect(Sidekiq.server_middleware.entries.last.klass).to eq(SidekiqPrometheus::JobMetrics)
+        events = Sidekiq.options[:lifecycle_events]
+      end
 
-      expect(Sidekiq.server_middleware.entries.last.klass).to eq(SidekiqPrometheus::JobMetrics)
-
-      events = Sidekiq.options[:lifecycle_events]
       expect(events[:startup].first).to be_kind_of(Proc)
       expect(events[:shutdown].first).to be_kind_of(Proc)
     end
