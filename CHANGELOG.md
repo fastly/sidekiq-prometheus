@@ -1,5 +1,18 @@
 CHANGELOG
 
+<a name="v1.9.0"></a>
+## [v1.9.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.3...v1.9.0) (2023-08-23)
+
+## What's Changed
+* Adds info about sidekiq_job_over_limit metric to README by @ricardogpsf in https://github.com/fastly/sidekiq-prometheus/pull/38
+* Allow label sets initialization while registering metrics by @davidbrusius in https://github.com/fastly/sidekiq-prometheus/pull/40
+
+## New Contributors
+* @ricardogpsf made their first contribution in https://github.com/fastly/sidekiq-prometheus/pull/38
+* @davidbrusius made their first contribution in https://github.com/fastly/sidekiq-prometheus/pull/40
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v1.8.3...v1.9.0
+
 <a name="v1.8.3"></a>
 ## [v1.8.3](https://github.com/fastly/sidekiq-prometheus/compare/v1.8.2...v1.8.3) (2023-01-30)
 
