@@ -1,7 +1,7 @@
 # Sidekiq Prometheus
 
 
-[![Status](https://travis-ci.org/fastly/sidekiq-prometheus.svg?branch=main)](https://travis-ci.org/fastly/sidekiq-prometheus)
+[![Status](https://github.com/fastly/sidekiq-prometheus/actions/workflows/ruby.yml/badge.svg)](https://github.com/fastly/sidekiq-prometheus/actions/workflows/ruby.yml)
 ![Gem](https://img.shields.io/gem/v/sidekiq_prometheus.svg?color=blue)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
