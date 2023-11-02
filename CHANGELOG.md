@@ -1,5 +1,17 @@
 CHANGELOG
 
+<a name="v2.0.1"></a>
+## [v2.0.1](https://github.com/fastly/sidekiq-prometheus/compare/v2.0.0...v2.0.1) (2023-11-01)
+
+## What's Changed
+* Use github actions instead of travis-ci. by @leklund in https://github.com/fastly/sidekiq-prometheus/pull/43
+* Fix: Accomodate apps that do not use Sidekiq Enterprise by @jayroh in https://github.com/fastly/sidekiq-prometheus/pull/42
+
+## New Contributors
+* @jayroh made their first contribution in https://github.com/fastly/sidekiq-prometheus/pull/42
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v2.0.0...v2.0.1
+
 <a name="v2.0.0"></a>
 ## [v2.0.0](https://github.com/fastly/sidekiq-prometheus/compare/v1.9.0...v2.0.0) (2023-08-23)
 
