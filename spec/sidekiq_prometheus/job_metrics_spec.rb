@@ -29,7 +29,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
         # execution order) that we remove it so we can test the fallback
         # behavior.
         if defined?(Sidekiq::Limiter)
-          Sidekiq.send(:remove_const, :"Limiter")
+          Sidekiq.send(:remove_const, :Limiter)
         end
       end
 
@@ -47,7 +47,7 @@ RSpec.describe SidekiqPrometheus::JobMetrics do
         expect(registry).not_to have_received(:get).with(:sidekiq_job_success)
 
         expect(metric).to have_received(:increment).once.with(labels: labels)
-        expect(metric).to have_received(:increment).once.with(labels: labels.merge(error_class: 'StandardError'))
+        expect(metric).to have_received(:increment).once.with(labels: labels.merge(error_class: "StandardError"))
         expect(metric).not_to have_received(:observe)
       end
     end
