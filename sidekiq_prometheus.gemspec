@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "standard"
 
   spec.add_runtime_dependency "prometheus-client", ">= 2.0"
-  spec.add_runtime_dependency "rack", "< 3.0"
+  spec.add_runtime_dependency "rack", " ~> 3.0"
   spec.add_runtime_dependency "redis"
   spec.add_runtime_dependency "sidekiq", "> 5.1"
-  spec.add_runtime_dependency "webrick"
+  spec.add_runtime_dependency "puma"
 end
