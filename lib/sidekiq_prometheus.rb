@@ -214,6 +214,19 @@ module SidekiqPrometheus
     end
   end
 
+  # Attempt to load Rackup to see if we're in Rack > 3.0
+  # This allows us to support both Rack 2.x and 3.x
+  def webrick_handler
+    @_webrick_handler ||= begin
+      begin
+        require 'rackup'
+      rescue LoadError # rubocop:disable Lint/SuppressedException
+      end
+    
+      defined?(Rackup::Handler::WEBrick) ? Rackup::Handler::WEBrick : Rack::Handler::WEBrick
+    end
+  end
+
   ##
   # Start a new Prometheus exporter in a new thread.
   # Will listen on SidekiqPrometheus.metrics_host and
@@ -230,7 +243,7 @@ module SidekiqPrometheus
     end
 
     @_metrics_server ||= Thread.new do
-      Rack::Handler::WEBrick.run(
+      webrick_handler.run(
         Rack::Builder.new {
           use Prometheus::Middleware::Exporter, registry: SidekiqPrometheus.registry
           run ->(_) { [301, {"Location" => "/metrics"}, []] }
