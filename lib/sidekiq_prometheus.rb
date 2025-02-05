@@ -219,10 +219,10 @@ module SidekiqPrometheus
   def webrick_handler
     @_webrick_handler ||= begin
       begin
-        require 'rackup'
+        require "rackup"
       rescue LoadError # rubocop:disable Lint/SuppressedException
       end
-    
+
       defined?(Rackup::Handler::WEBrick) ? Rackup::Handler::WEBrick : Rack::Handler::WEBrick
     end
   end
@@ -238,7 +238,7 @@ module SidekiqPrometheus
     }
 
     unless metrics_server_logger_enabled?
-      opts[:Logger] = WEBrick::Log.new("/dev/null")
+      opts[:Logger] = WEBrick::Log.new(File::NULL)
       opts[:AccessLog] = []
     end
 

@@ -26,5 +26,5 @@ def silence
 end
 
 Sidekiq.configure_server do |cfg|
-  cfg.logger = Logger.new("/dev/null")
+  cfg.logger = Logger.new(File::NULL)
 end
