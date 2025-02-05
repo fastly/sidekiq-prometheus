@@ -219,7 +219,7 @@ module SidekiqPrometheus
   def webrick_handler
     @_webrick_handler ||= begin
       begin
-        require 'rackup'
+        require "rackup"
       rescue LoadError # rubocop:disable Lint/SuppressedException
       end
     
