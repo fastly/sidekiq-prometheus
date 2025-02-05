@@ -2,6 +2,7 @@
 
 require "benchmark"
 require "rack"
+require "rackup"
 require "prometheus/client"
 require "prometheus/middleware/exporter"
 require "sidekiq"
@@ -225,12 +226,12 @@ module SidekiqPrometheus
     }
 
     unless metrics_server_logger_enabled?
-      opts[:Logger] = WEBrick::Log.new("/dev/null")
+      opts[:Logger] = WEBrick::Log.new(File::NULL)
       opts[:AccessLog] = []
     end
 
     @_metrics_server ||= Thread.new do
-      Rack::Handler::WEBrick.run(
+      Rackup::Handler::WEBrick.run(
         Rack::Builder.new {
           use Prometheus::Middleware::Exporter, registry: SidekiqPrometheus.registry
           run ->(_) { [301, {"Location" => "/metrics"}, []] }
