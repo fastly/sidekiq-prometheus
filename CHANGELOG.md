@@ -1,5 +1,17 @@
 CHANGELOG
 
+<a name="v3.0.0"></a>
+## [v3.0.0](https://github.com/fastly/sidekiq-prometheus/compare/v2.0.1...v3.0.0) (2025-02-11)
+## Breaking Change!
+
+Version 3.0.0 only supports Rack version 3.0 and higher.
+
+## What's Changed
+
+* Require Rack ~> 3.0 by @leklund in https://github.com/fastly/sidekiq-prometheus/pull/48
+
+**Full Changelog**: https://github.com/fastly/sidekiq-prometheus/compare/v2.0.1...v3.0.0
+
 <a name="v2.0.1"></a>
 ## [v2.0.1](https://github.com/fastly/sidekiq-prometheus/compare/v2.0.0...v2.0.1) (2023-11-01)
 
