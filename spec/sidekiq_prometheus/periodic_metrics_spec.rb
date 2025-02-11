@@ -35,11 +35,13 @@ RSpec.describe SidekiqPrometheus::PeriodicMetrics do
 
   describe "#start" do
     it "starts a reporter in a new thread" do
-      allow(Thread).to receive(:new)
+      silence do
+        allow(Thread).to receive(:new)
 
-      reporter.start
+        reporter.start
 
-      expect(Thread).to have_received(:new) { |&block| expect(block).to be_kind_of(Proc) }
+        expect(Thread).to have_received(:new) { |&block| expect(block).to be_kind_of(Proc) }
+      end
     end
   end
 
