@@ -15,7 +15,7 @@ class SidekiqPrometheus::JobMetrics
       labels.merge!(custom_labels(worker))
 
       result = nil
-      duration = Benchmark.realtime { result = yield }
+      duration = measuring_duration { result = yield }
 
       # In case the labels have changed after the worker perform method has been called
       labels.merge!(custom_labels(worker))
@@ -51,5 +51,11 @@ class SidekiqPrometheus::JobMetrics
 
   def custom_labels(worker)
     worker.respond_to?(:prometheus_labels) ? worker.prometheus_labels : {}
+  end
+
+  def measuring_duration
+    start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    yield
+    Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time
   end
 end
