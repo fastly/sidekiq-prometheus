@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "benchmark"
 require "rack"
 require "rackup"
 require "prometheus/client"
